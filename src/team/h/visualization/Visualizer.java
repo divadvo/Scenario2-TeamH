@@ -1,17 +1,16 @@
 package team.h.visualization;
 
 import team.h.core.Problem;
+import team.h.core.ProblemsAndSolutions;
 
 import java.util.List;
 
 public class Visualizer {
 
-    private List<Problem> problems;
     private VisualizerGUI visualizerGUI;
 
-    public Visualizer(List<Problem> problems) {
-        this.problems = problems;
-        this.visualizerGUI = new VisualizerGUI(problems);
+    public Visualizer(ProblemsAndSolutions problemsAndSolutions) {
+        this.visualizerGUI = new VisualizerGUI(problemsAndSolutions);
     }
 
     public void visualize() {

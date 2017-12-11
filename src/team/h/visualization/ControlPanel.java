@@ -1,6 +1,8 @@
 package team.h.visualization;
 
 import team.h.core.Problem;
+import team.h.core.ProblemsAndSolutions;
+import team.h.core.Solution;
 
 import javax.swing.*;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.List;
 public class ControlPanel extends JPanel {
 
     private List<Problem> problems;
+    private List<Solution> solutions;
     private VisualizerPanel visualizerPanel;
 
     private JSlider sliderProblemNumber;
@@ -17,12 +20,14 @@ public class ControlPanel extends JPanel {
     private int numberOfProblems;
     private int currentProblemNumber;
 
-    public ControlPanel(VisualizerPanel visualizerPanel, List<Problem> problems) {
+    public ControlPanel(VisualizerPanel visualizerPanel, ProblemsAndSolutions problemsAndSolutions) {
         this.visualizerPanel = visualizerPanel;
 
-        this.problems = problems;
+        this.problems = problemsAndSolutions.getProblems();
         numberOfProblems = problems.size(); // TODO: change
         currentProblemNumber = 1;
+
+        this.solutions = problemsAndSolutions.getSolutions();
 
         initUI();
         updateLabels();
@@ -59,7 +64,9 @@ public class ControlPanel extends JPanel {
 
     private void redrawProblem() {
         Problem currentProblem = problems.get(currentProblemNumber - 1);
+        Solution currentSolution = solutions.get(currentProblemNumber - 1);
         visualizerPanel.setProblem(currentProblem);
+        visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();
     }
 

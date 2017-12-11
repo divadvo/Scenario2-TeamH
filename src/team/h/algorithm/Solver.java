@@ -22,7 +22,9 @@ public class Solver {
         List<Shape> shapes = new ArrayList<>();
         List<Point> points = new ArrayList<>();
         points.add(new Point(0,0));
-        points.add(new Point(10, 10));
+        points.add(new Point(0, 1));
+        points.add(new Point(1, 1));
+        points.add(new Point(1, 0));
         shapes.add(new Shape(1, points));
         this.solution = new Solution(0, shapes);
 

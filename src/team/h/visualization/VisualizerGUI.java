@@ -1,6 +1,7 @@
 package team.h.visualization;
 
 import team.h.core.Problem;
+import team.h.core.ProblemsAndSolutions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,16 +11,12 @@ public class VisualizerGUI extends JFrame {
 
     private static final String TITLE = "Team H - Visualizer";
 
-    private List<Problem> problems;
-
     private VisualizerPanel visualizerPanel;
     private ControlPanel controlPanel;
 
-    public VisualizerGUI(List<Problem> problems){
-        this.problems = problems;
-
+    public VisualizerGUI(ProblemsAndSolutions problemsAndSolutions){
         visualizerPanel = new VisualizerPanel();
-        controlPanel = new ControlPanel(visualizerPanel, problems);
+        controlPanel = new ControlPanel(visualizerPanel, problemsAndSolutions);
 
         JPanel container = new JPanel();
         container.setLayout(new BorderLayout());

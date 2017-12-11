@@ -1,6 +1,9 @@
 package team.h.visualization;
 
+import team.h.algorithm.AllProblemSolver;
 import team.h.core.Problem;
+import team.h.core.ProblemsAndSolutions;
+import team.h.core.Solution;
 import team.h.io.ProblemParser;
 
 import java.util.List;
@@ -8,13 +11,9 @@ import java.util.List;
 public class VisualizationTest {
 
     public static void main(String[] args) {
-//        ProblemParser problemParser = new ProblemParser("input/problems.rfp");
-//        problemParser.parse();
-//        List<Problem> problemList = problemParser.getProblems();
-
-        List<Problem> problemList = new ProblemParser("input/problems.rfp").parse();
-
-
-        new Visualizer(problemList).visualize();
+        List<Problem> problems = new ProblemParser("input/simple.rfp").parse();
+        List<Solution> solutions = new AllProblemSolver(problems).solve();
+//        new SolutionPrinter("output/", solutions).output();
+        new Visualizer(new ProblemsAndSolutions(problems, solutions)).visualize();
     }
 }
