@@ -15,6 +15,10 @@ public class ProblemParser {
 
     private String problemFilePath;
 
+    public List<Problem> getProblems() {
+        return problems;
+    }
+
     private List<Problem> problems = new ArrayList<>();
 
 
@@ -60,10 +64,10 @@ public class ProblemParser {
 
     private List<Shape> createShapes(String shapesString) {
         List<Shape> shapes = new ArrayList<>();
-        List<String> shapesStrings = Arrays.asList(shapesString.split("; "));
+        List<String> shapesStrings = Arrays.asList(shapesString.split(";"));
         for (String shapeString : shapesStrings) {
             int cost = getIdentifier(shapeString);
-            List<Point> points = createPoints(shapeString);
+            List<Point> points = createPoints(shapeString.trim());
             shapes.add(new Shape(cost, points));
         }
         return shapes;
