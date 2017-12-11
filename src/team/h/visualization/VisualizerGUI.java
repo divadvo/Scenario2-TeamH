@@ -1,6 +1,6 @@
 package team.h.visualization;
 
-import team.h.Problem;
+import team.h.core.Problem;
 
 import javax.swing.*;
 import java.awt.*;

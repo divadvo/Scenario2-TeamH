@@ -1,6 +1,6 @@
 package team.h.visualization;
 
-import team.h.Problem;
+import team.h.core.Problem;
 
 import javax.swing.*;
 import java.util.List;
@@ -60,6 +60,7 @@ public class ControlPanel extends JPanel {
     private void redrawProblem() {
         Problem currentProblem = problems.get(currentProblemNumber - 1);
         visualizerPanel.setProblem(currentProblem);
+        visualizerPanel.redraw();
     }
 
     private void updateLabels() {
