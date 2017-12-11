@@ -24,17 +24,13 @@ public class ProblemParser {
 
     public void parse() {
         try {
-            List<String> problems;
-            problems = Files.lines(Paths.get(problemFilePath)).collect(Collectors.toList());
-            System.out.println(problems.size());
-            System.out.println(problems.get(0));
             List<String> problemStrings;
             problemStrings = Files.lines(Paths.get(problemFilePath)).collect(Collectors.toList());
             for (String problemString : problemStrings) {
                 int problemIdentifier = getIdentifier(problemString);
-                List<String> problemComponents = Arrays.asList(problemString.split(" # "));
-                Room problemRoom = createRoom(problemComponents.get(0));
-                List<Shape> problemShapes = createShapes(problemComponents.get(1));
+                List<String> problemComponents = Arrays.asList(problemString.split("#"));
+                Room problemRoom = createRoom(problemComponents.get(0).trim());
+                List<Shape> problemShapes = createShapes(problemComponents.get(1).trim());
                 problems.add(new Problem(problemIdentifier, problemRoom, problemShapes));
             }
         } catch (IOException e) {
