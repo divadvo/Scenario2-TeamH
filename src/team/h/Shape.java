@@ -2,34 +2,25 @@ package team.h;
 
 import java.util.List;
 
-public class Shape {
-
+public class Shape extends Polygon
+{
     private double costPerUnit;
     private double totalCost;
 
-    private List<Point> points;
-
-    public Shape(double costPerUnit, List<Point> points) {
+    public Shape(double costPerUnit, List<Point> points)
+    {
         this.costPerUnit = costPerUnit;
         this.points = points;
-
-        this.totalCost = calculateTotalCost();
+        this.totalCost = calculateArea();
     }
 
-    private double calculateTotalCost() {
-        // Area * costPerUnit
-        return 0;
-    }
-
-    public double getCostPerUnit() {
+    public double getCostPerUnit()
+    {
         return costPerUnit;
     }
 
-    public double getTotalCost() {
+    public double getTotalCost()
+    {
         return totalCost;
-    }
-
-    public List<Point> getPoints() {
-        return points;
     }
 }
