@@ -2,6 +2,7 @@ package team.h.core;
 
 import team.h.core.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Shape {
@@ -35,9 +36,13 @@ public class Shape {
         return points;
     }
 
-    public void translate(double dx, double dy) {
+    public Shape translate(double dx, double dy) {
+        List<Point> newPoints = new ArrayList<>();
         for(Point point : points) {
-            point.translate(dx, dy);
+            Point newPoint = point.translate(dx, dy);
+            newPoints.add(newPoint);
         }
+        Shape newShape = new Shape(costPerUnit, newPoints);
+        return newShape;
     }
 }

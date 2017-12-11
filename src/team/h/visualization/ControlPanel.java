@@ -5,6 +5,9 @@ import team.h.core.ProblemsAndSolutions;
 import team.h.core.Solution;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
 
 public class ControlPanel extends JPanel {
@@ -19,6 +22,7 @@ public class ControlPanel extends JPanel {
 
     private int numberOfProblems;
     private int currentProblemNumber;
+    private JComboBox<Visualizer.TYPE> jComboBox;
 
     public ControlPanel(VisualizerPanel visualizerPanel, ProblemsAndSolutions problemsAndSolutions) {
         this.visualizerPanel = visualizerPanel;
@@ -37,13 +41,18 @@ public class ControlPanel extends JPanel {
     private void initUI() {
         labelNumberOfProblems = new JLabel();
         labelCurrentProblem = new JLabel();
+        JButton buttonRedraw = new JButton("Redraw");
+        buttonRedraw.addActionListener(e -> redrawProblem());
 
         createProblemSlider();
+        createComboBox();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(labelNumberOfProblems);
         this.add(labelCurrentProblem);
         this.add(sliderProblemNumber);
+        this.add(buttonRedraw);
+        this.add(jComboBox);
     }
 
     private void createProblemSlider() {
@@ -62,9 +71,25 @@ public class ControlPanel extends JPanel {
         sliderProblemNumber.setPaintLabels(true);
     }
 
+    private void createComboBox() {
+//        String[] types = getNames(Visualizer.TYPE.class);
+        jComboBox = new JComboBox<>(Visualizer.TYPE.values());
+        jComboBox.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                redrawProblem();
+            }
+        });
+    }
+
+    private static String[] getNames(Class<? extends Enum<?>> e) {
+        return Arrays.stream(e.getEnumConstants()).map(Enum::name).toArray(String[]::new);
+    }
+
     private void redrawProblem() {
         Problem currentProblem = problems.get(currentProblemNumber - 1);
         Solution currentSolution = solutions.get(currentProblemNumber - 1);
+        Visualizer.TYPE type = (Visualizer.TYPE) jComboBox.getSelectedItem();
+        visualizerPanel.setDrawingType(type);
         visualizerPanel.setProblem(currentProblem);
         visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();

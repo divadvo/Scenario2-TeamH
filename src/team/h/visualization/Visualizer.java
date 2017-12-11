@@ -9,6 +9,11 @@ public class Visualizer {
 
     private VisualizerGUI visualizerGUI;
 
+    public enum TYPE {
+        RANDOM,
+        BOX;
+    }
+
     public Visualizer(ProblemsAndSolutions problemsAndSolutions) {
         this.visualizerGUI = new VisualizerGUI(problemsAndSolutions);
     }
