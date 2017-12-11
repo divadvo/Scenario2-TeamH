@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 public class ProblemParser {
 
     private String problemFilePath;
+
     private List<Problem> problems = new ArrayList<>();
+
 
     public ProblemParser(String problemFilePath) {
         this.problemFilePath = problemFilePath;
@@ -26,9 +28,9 @@ public class ProblemParser {
             problemStrings = Files.lines(Paths.get(problemFilePath)).collect(Collectors.toList());
             for (String problemString : problemStrings) {
                 int problemIdentifier = getIdentifier(problemString);
-                List<String> problemComponents = Arrays.asList(problemString.split(" # "));
-                Room problemRoom = createRoom(problemComponents.get(0));
-                List<Shape> problemShapes = createShapes(problemComponents.get(1));
+                List<String> problemComponents = Arrays.asList(problemString.split("#"));
+                Room problemRoom = createRoom(problemComponents.get(0).trim());
+                List<Shape> problemShapes = createShapes(problemComponents.get(1).trim());
                 problems.add(new Problem(problemIdentifier, problemRoom, problemShapes));
             }
         } catch (IOException e) {
@@ -66,5 +68,4 @@ public class ProblemParser {
         }
         return shapes;
     }
-
 }
