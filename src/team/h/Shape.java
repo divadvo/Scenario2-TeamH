@@ -4,24 +4,22 @@ import java.util.List;
 
 public class Shape extends Polygon
 {
-    private double costPerUnit;
     private double totalCost;
 
-    public double getCostPerUnit() {
-        return costPerUnit;
-    }
-    public double getTotalCost() {
-        return totalCost;
-    }
-
-    public Shape(double costPerUnit, List<Point> points) {
+    public Shape(double costPerUnit, List<Point> points)
+    {
         super(points);
-        this.costPerUnit = costPerUnit;
-        this.totalCost = calculateTotalCost();
+        this.totalCost = calculateTotalCost(costPerUnit);
     }
 
-    private double calculateTotalCost(){
+    private double calculateTotalCost(double costPerUnit)
+    {
         return area * costPerUnit;
+    }
+
+    public double getTotalCost()
+    {
+        return totalCost;
     }
 
 }

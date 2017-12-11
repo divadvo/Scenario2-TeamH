@@ -4,23 +4,57 @@ import java.util.List;
 
 public class PartsOfPolygon
 {
+    //----------------------------------------------------------------------------------------------------
     static class Angle
     {
         private double value;
 
-        public Angle(double value) {
-            this.value = value;
+        public Angle(Edge a, Edge b)
+        {
+           this.value = calculateAngleBetween(a,b);
         }
 
         public double getValue()
         {
             return value;
         }
+
+
+        private double calculateAngleBetween(PartsOfPolygon.Edge edgeA, PartsOfPolygon.Edge edgeB)
+        {
+            Point startPoint = edgeA.getA();
+            Point centerPoint = edgeA.getB();
+            Point endPoint = edgeB.getB();
+            double[] vectorA = {centerPoint.getX() - startPoint.getX(), centerPoint.getY() - startPoint.getY()};
+            double[] vectorB = {endPoint.getX() - centerPoint.getX(), endPoint.getY() - centerPoint.getY()};
+            double dotProduct = dotProduct(vectorA, vectorB);
+            double magnitudes = magnitude(vectorA) * magnitude(vectorB);
+
+            return Math.acos(dotProduct / magnitudes);
+        }
+
+        private double dotProduct(double[] vectorA, double[] vectorB)
+        {
+            int size = vectorA.length;
+            double sum = 0;
+            for (int i = 0; i < size; i++)
+            {
+                sum += vectorA[i] * vectorB[i];
+            }
+            return sum;
+        }
+
+        private double magnitude(double[] vector)
+        {
+            return Math.sqrt(dotProduct(vector, vector));
+        }
     }
+
+    //----------------------------------------------------------------------------------------------------
 
     static class Edge
     {
-        private Point a,b; // a is the first point given, b the second
+        private Point a, b; // a is the first point given, b the second
 
         public Edge(Point a, Point b)
         {
@@ -39,15 +73,5 @@ public class PartsOfPolygon
         }
     }
 
-    static class Triangle
-    {
-        private Edge e1, e2, e3;
-
-        public Triangle(Edge e1, Edge e2, Edge e3)
-        {
-            this.e1 = e1;
-            this.e2 = e2;
-            this.e3 = e3;
-        }
-    }
+    //----------------------------------------------------------------------------------------------------
 }
