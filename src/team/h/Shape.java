@@ -7,18 +7,6 @@ public class Shape {
     private double costPerUnit;
     private double totalCost;
 
-    public double getCostPerUnit() {
-        return costPerUnit;
-    }
-
-    public double getTotalCost() {
-        return totalCost;
-    }
-
-    public List<Point> getPoints() {
-        return points;
-    }
-
     private List<Point> points;
 
     public Shape(double costPerUnit, List<Point> points) {
