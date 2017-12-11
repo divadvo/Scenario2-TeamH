@@ -44,7 +44,7 @@ public class ProblemParser {
 
     private int getIdentifier(String problemString) {
         int colon = problemString.indexOf(":");
-        return Integer.parseInt(problemString.substring(0, colon));
+        return Integer.parseInt(problemString.substring(0, colon).trim());
     }
 
     private List<Point> createPoints(String pointsString) {
