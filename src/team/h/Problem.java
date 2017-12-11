@@ -33,4 +33,16 @@ public class Problem {
         }
         System.out.println("-----------------------------------------------------------------");
     }
+
+    public int getProblemNumber() {
+        return problemNumber;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public List<Shape> getShapes() {
+        return shapes;
+    }
 }
