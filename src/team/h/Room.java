@@ -9,4 +9,8 @@ public class Room {
     public Room(List<Point> points) {
         this.points = points;
     }
+
+    public List<Point> getPoints() {
+        return points;
+    }
 }

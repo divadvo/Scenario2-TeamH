@@ -20,5 +20,15 @@ public class Shape {
         return 0;
     }
 
+    public double getCostPerUnit() {
+        return costPerUnit;
+    }
 
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public List<Point> getPoints() {
+        return points;
+    }
 }
