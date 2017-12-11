@@ -13,25 +13,35 @@ public class Problem {
         this.room = room;
         this.shapes = shapes;
 
-        System.out.println(problemNumber);
-        System.out.println();
-        System.out.println("Room:");
-        for (Point point : room.getPoints()) {
-            System.out.print(point.getX());
-            System.out.print(", ");
-            System.out.println(point.getY());
+//        System.out.println(problemNumber);
+//        System.out.println();
+//        System.out.println("Room:");
+//        for (Point point : room.getPoints()) {
+//            System.out.print(point.getX());
+//            System.out.print(", ");
+//            System.out.println(point.getY());
+//        }
+//        System.out.println();
+//        System.out.println("Shapes:");
+//        for (Shape shape : shapes) {
+//            System.out.println(shape.getCostPerUnit());
+//            for (Point point : shape.getPoints()) {
+//                System.out.print(point.getX());
+//                System.out.print(", ");
+//                System.out.println(point.getY());
+//            }
+//        }
+//        System.out.println("-----------------------------------------------------------------");
+        for (PartsOfPolygon.Angle angle : room.getAngles()) {
+            System.out.println(angle.getValue());
+            System.out.println();
         }
-        System.out.println();
-        System.out.println("Shapes:");
         for (Shape shape : shapes) {
-            System.out.println(shape.getCostPerUnit());
-            for (Point point : shape.getPoints()) {
-                System.out.print(point.getX());
-                System.out.print(", ");
-                System.out.println(point.getY());
+            for (PartsOfPolygon.Angle angle : shape.getAngles()) {
+                System.out.println(angle.getValue());
+                System.out.println();
             }
         }
-        System.out.println("-----------------------------------------------------------------");
     }
 
     public int getProblemNumber() {

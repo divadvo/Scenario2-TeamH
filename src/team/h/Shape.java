@@ -7,20 +7,21 @@ public class Shape extends Polygon
     private double costPerUnit;
     private double totalCost;
 
-    public Shape(double costPerUnit, List<Point> points)
-    {
-        this.costPerUnit = costPerUnit;
-        this.points = points;
-        this.totalCost = calculateArea();
-    }
-
-    public double getCostPerUnit()
-    {
+    public double getCostPerUnit() {
         return costPerUnit;
     }
-
-    public double getTotalCost()
-    {
+    public double getTotalCost() {
         return totalCost;
     }
+
+    public Shape(double costPerUnit, List<Point> points) {
+        super(points);
+        this.costPerUnit = costPerUnit;
+        this.totalCost = calculateTotalCost();
+    }
+
+    private double calculateTotalCost(){
+        return area * costPerUnit;
+    }
+
 }

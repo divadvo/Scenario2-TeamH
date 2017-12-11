@@ -6,22 +6,21 @@ public class PartsOfPolygon
 {
     static class Angle
     {
-        private double angle;
+        private double value;
 
-        public Angle(Edge e1, Edge e2)
-        {
-
+        public Angle(double value) {
+            this.value = value;
         }
 
-        public double getAngle()
+        public double getValue()
         {
-            return angle;
+            return value;
         }
     }
 
     static class Edge
     {
-        private Point a,b;
+        private Point a,b; // a is the first point given, b the second
 
         public Edge(Point a, Point b)
         {

@@ -26,9 +26,9 @@ public class ProblemParser {
             problemStrings = Files.lines(Paths.get(problemFilePath)).collect(Collectors.toList());
             for (String problemString : problemStrings) {
                 int problemIdentifier = getIdentifier(problemString);
-                List<String> problemComponents = Arrays.asList(problemString.split(" # "));
-                Room problemRoom = createRoom(problemComponents.get(0));
-                List<Shape> problemShapes = createShapes(problemComponents.get(1));
+                List<String> problemComponents = Arrays.asList(problemString.split("#"));
+                Room problemRoom = createRoom(problemComponents.get(0).trim());
+                List<Shape> problemShapes = createShapes(problemComponents.get(1).trim());
                 problems.add(new Problem(problemIdentifier, problemRoom, problemShapes));
             }
         } catch (IOException e) {
@@ -38,7 +38,7 @@ public class ProblemParser {
 
     private int getIdentifier(String problemString) {
         int colon = problemString.indexOf(":");
-        return Integer.parseInt(problemString.substring(0, colon));
+        return Integer.parseInt(problemString.substring(0, colon).trim());
     }
 
     private List<Point> createPoints(String pointsString) {
@@ -53,15 +53,15 @@ public class ProblemParser {
 
     private Room createRoom(String roomString) {
         List<Point> points = createPoints(roomString);
-        return (new Room(points));
+        return new Room(points);
     }
 
     private List<Shape> createShapes(String shapesString) {
         List<Shape> shapes = new ArrayList<>();
-        List<String> shapesStrings = Arrays.asList(shapesString.split("; "));
+        List<String> shapesStrings = Arrays.asList(shapesString.split(";"));
         for (String shapeString : shapesStrings) {
             int cost = getIdentifier(shapeString);
-            List<Point> points = createPoints(shapeString);
+            List<Point> points = createPoints(shapeString.trim());
             shapes.add(new Shape(cost, points));
         }
         return shapes;
