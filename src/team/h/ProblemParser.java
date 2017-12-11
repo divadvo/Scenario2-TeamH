@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class ProblemParser {
 
     private String problemFilePath;
-    private List<String> problems;
+    private List<Problem> problems;
 
     public ProblemParser(String problemFilePath) {
         this.problemFilePath = problemFilePath;
@@ -17,12 +17,13 @@ public class ProblemParser {
 
     public void parse() {
         try {
+            List<String> problems;
             problems = Files.lines(Paths.get(problemFilePath)).collect(Collectors.toList());
             System.out.println(problems.size());
+            System.out.println(problems.get(0));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 }
