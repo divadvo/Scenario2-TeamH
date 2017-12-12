@@ -74,15 +74,24 @@ public class VisualizerPanel extends JPanel {
         g2.setColor(Color.GREEN);
         g2.drawRect(0, 0, 1000, 1000);
 
+        ColorRange colorRange = generateColorRange(shapeList);
+
         g2.setColor(Color.RED);
 
         for (Shape shape : shapeList) {
             List<Point> shapePoints = shape.getPoints();
             GeneralPath path = new DrawableShape(shapePoints).generatePath();
 
+            if(true) {
+                g2.setColor(colorRange.generateColor(shape.getTotalCost()));
+                g2.fill(path);
+            }
+            else {
 
-            System.out.println(Utils.isShapeInsideAnother(roomPath, path));
-            g2.draw(path);
+                g2.draw(path);
+            }
+//            System.out.println(Utils.isShapeInsideAnother(roomPath, path));
+//            g2.draw(path);
         }
         g2.setTransform(oldTransform);
     }
@@ -206,6 +215,8 @@ public class VisualizerPanel extends JPanel {
 
         // TODO: change getBounds -> getBounds2D because greater precision
 
+        ColorRange colorRange = generateColorRange(shapeList);
+
         calculateAndSetOrigin(g2);
 
         for (Shape shape : shapeList) {
@@ -220,23 +231,43 @@ public class VisualizerPanel extends JPanel {
                 i++;
             } while (doesIntersectWithAnyOther(path, addedShapes));
 //            System.out.println(i);
-            g2.draw(path);
+            if(true) {
+                Color color = colorRange.generateColor(shape.getTotalCost());
+                g2.setColor(color);
+                g2.fill(path);
+            }
+            else {
+
+                g2.draw(path);
+            }
 
 
-            AffineTransform oldTransform = g2.getTransform();
+//            AffineTransform oldTransform = g2.getTransform();
 
 //            g2.translate(0, getHeight() - 1);
 //            g2.scale(1, -1);
 //            g2.scale(1 / scale, 1 / scale);
-            g2.drawString(shape.getTotalCost() + "", (int) bounds.getX(), (int) bounds.getY());
-            System.out.println("Cost: " + shape.getTotalCost());
 
-            g2.setTransform(oldTransform);
+//            g2.drawString(shape.getTotalCost() + "", (int) bounds.getX(), (int) bounds.getY());
+
+//            System.out.println("Cost: " + shape.getTotalCost());
+
+//            g2.setTransform(oldTransform);
 
 
 //            System.out.println(path);
             addedShapes.add(path);
         }
+    }
+
+    private ColorRange generateColorRange(List<Shape> shapeList) {
+        List<Shape> shapesSortedByCost = new ArrayList<>(shapeList);
+        Collections.sort(shapesSortedByCost, Comparator.comparing(o -> o.getTotalCost()));
+
+        Shape smallestCostShape = shapesSortedByCost.get(0);
+        Shape highestCostShape = shapesSortedByCost.get(shapesSortedByCost.size() - 1);
+
+        return new ColorRange(smallestCostShape.getTotalCost(), highestCostShape.getTotalCost());
     }
 
     private void drawShapesBox(Graphics2D g2) {

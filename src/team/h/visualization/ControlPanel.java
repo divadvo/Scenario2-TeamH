@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class ControlPanel extends JPanel {
 
@@ -23,6 +24,7 @@ public class ControlPanel extends JPanel {
     private int numberOfProblems;
     private int currentProblemNumber;
     private JComboBox<Visualizer.TYPE> jComboBox;
+    private JComboBox<Integer> jComboBoxProblem;
 
     public ControlPanel(VisualizerPanel visualizerPanel, ProblemsAndSolutions problemsAndSolutions) {
         this.visualizerPanel = visualizerPanel;
@@ -51,6 +53,7 @@ public class ControlPanel extends JPanel {
         this.add(labelNumberOfProblems);
         this.add(labelCurrentProblem);
         this.add(sliderProblemNumber);
+        this.add(jComboBoxProblem);
         this.add(buttonRedraw);
         this.add(jComboBox);
     }
@@ -73,8 +76,18 @@ public class ControlPanel extends JPanel {
     private void createComboBox() {
 //        String[] types = getNames(Visualizer.TYPE.class);
         jComboBox = new JComboBox<>(Visualizer.TYPE.values());
-        jComboBox.addActionListener (new ActionListener () {
+        jComboBox.addActionListener (e -> redrawProblem());
+
+//        int a[] = IntStream.range(1, problems.size()).toArray();
+//        List<Integer> integers = Arrays.asList(a);
+        jComboBoxProblem = new JComboBox<>();
+        for(int i = 1; i <= problems.size(); i++)
+            jComboBoxProblem.addItem(i);
+
+        jComboBoxProblem.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
+                int i = (Integer)jComboBoxProblem.getSelectedItem();
+                currentProblemNumber = i;
                 redrawProblem();
             }
         });
@@ -92,6 +105,9 @@ public class ControlPanel extends JPanel {
         visualizerPanel.setProblem(currentProblem);
         visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();
+
+        sliderProblemNumber.setValue(currentProblemNumber);
+        jComboBoxProblem.setSelectedIndex(currentProblemNumber - 1);
 
         labelNumberOfProblems.setText("Number of problems: " + numberOfProblems);
         labelCurrentProblem.setText("Current Problem: " + currentProblemNumber);

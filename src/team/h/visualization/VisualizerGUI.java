@@ -32,8 +32,10 @@ public class VisualizerGUI extends JFrame {
 
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
         visualizerPanel.setMinimumSize(new Dimension(1280, 720));
+        visualizerPanel.setMaximumSize(new Dimension(1280, 720));
         container.add(visualizerPanel);
         controlPanel.setMinimumSize(new Dimension(200, 720));
+        controlPanel.setMaximumSize(new Dimension(200, 720));
         container.add(controlPanel);
         container.setMinimumSize(new Dimension(1480, 720));
 
