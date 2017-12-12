@@ -4,18 +4,21 @@ import team.h.core.Point;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Shape {
 
     private int costPerUnit;
     private double totalCost;
     private double area;
+    private UUID uuid;
 
     private List<Point> points;
 
     public Shape(int costPerUnit, List<Point> points) {
         this.costPerUnit = costPerUnit;
         this.points = points;
+        this.uuid = UUID.randomUUID();
 
         calculateArea();
         calculateTotalCost();
@@ -110,9 +113,17 @@ public class Shape {
         return point;
     }
 
+    public UUID getUUID() {
+        return uuid;
+    }
+
     @Override
     public boolean equals(Object obj) {
         Shape other = (Shape) obj;
         return points.equals(other.getPoints()) && this.getCostPerUnit() == other.getCostPerUnit();
+    }
+
+    public boolean equalsWithUUID(Shape other) {
+        return this.equals(other) && this.uuid.equals(other.getUUID());
     }
 }

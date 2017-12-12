@@ -79,17 +79,17 @@ public class SolutionPrinter {
         return result.toString();
     }
 
-    private double totalCost() {
+    public double totalCost() {
         double cost = 0;
         for(Solution solution : solutions)
             cost += solution.getTotalCost();
         return cost;
     }
 
-    private double totalArea() {
+    public double totalArea() {
         double area = 0;
         for(Solution solution : solutions)
-            area += solution.getTotalCost();
+            area += solution.getTotalArea();
         return area;
     }
 }

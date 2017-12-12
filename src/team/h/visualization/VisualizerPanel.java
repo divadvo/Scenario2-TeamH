@@ -4,6 +4,7 @@ import team.h.core.Point;
 import team.h.core.Problem;
 import team.h.core.Shape;
 import team.h.core.Solution;
+import team.h.io.SolutionPrinter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,7 @@ public class VisualizerPanel extends JPanel {
     private ShapeAndShape chosenShape = null;
     private double shiftX = 0, shiftY = 0;
     private double angle = 0;
+    private double angleDelta = 1, delta = 1;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -74,7 +76,7 @@ public class VisualizerPanel extends JPanel {
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
                 System.out.println("Pressed");
-                double delta = 1;
+                System.out.println(delta + "  " + angleDelta);
                 switch (keyCode) {
                     case KeyEvent.VK_UP:
                         shiftY += delta;
@@ -92,10 +94,13 @@ public class VisualizerPanel extends JPanel {
                         saveChosenShape();
                         break;
                     case KeyEvent.VK_R:
-                        angle -= 1;
+                        angle -= angleDelta;
                         break;
                     case KeyEvent.VK_E:
-                        angle += 1;
+                        angle += angleDelta;
+                        break;
+                    case KeyEvent.VK_ESCAPE:
+                        cancelChosenShape();
                         break;
                 }
                 System.out.println(shiftX + " " + shiftY);
@@ -110,6 +115,13 @@ public class VisualizerPanel extends JPanel {
         });
     }
 
+    private void cancelChosenShape() {
+        chosenShape = null;
+        shiftX = 0;
+        shiftY = 0;
+        angle = 0;
+    }
+
     private void saveChosenShape() {
         // Save in solution
         // remove from list?
@@ -120,10 +132,12 @@ public class VisualizerPanel extends JPanel {
 //        Shape chosenShapeOur = chosenShape.getOurShape();
 //        problemShapes.remove(chosenShapeOur);
 
-        chosenShape = null;
-        shiftX = 0;
-        shiftY = 0;
-        angle = 0;
+        List<Solution> sols = new ArrayList<>();
+        sols.add(solution);
+        double totalCost = new SolutionPrinter("output/", sols).totalCost();
+        System.out.println("NEW TOTAL COST: " + totalCost);
+
+        cancelChosenShape();
     }
 
     public void setProblem(Problem problem) {
@@ -176,6 +190,15 @@ public class VisualizerPanel extends JPanel {
         g2.setColor(Color.RED);
         if(Utils.areShapesIntersecting(roomPath, path) && !Utils.isShapeInsideAnother(roomPath, path))
             g2.setColor(Color.CYAN);
+
+        // Go through all solution shapes and check if intersect
+        for(Shape shape : solution.getShapes()) {
+            List<Point> shapePointsNew = shape.getPoints();
+            GeneralPath pathNew = new DrawableShape(shapePointsNew).generatePath();
+            if(Utils.areShapesIntersecting(pathNew, path) && !Utils.isShapeInsideAnother(pathNew, path))
+                g2.setColor(Color.CYAN);
+        }
+
         g2.fill(path);
 
         g2.setTransform(oldTransform);
@@ -321,7 +344,7 @@ public class VisualizerPanel extends JPanel {
         for (Shape shape : problem.getShapes()) {
             boolean contains = false;
             for (Shape shape1 : removedShapes) {
-                if (shape.equals(shape1)) {
+                if (shape.equalsWithUUID(shape1)) {
                     contains = true;
                     break;
                 }
@@ -551,5 +574,10 @@ public class VisualizerPanel extends JPanel {
     public void redraw() {
         this.revalidate();
         this.repaint();
+    }
+
+    public void setDeltaAndAngle(double delta, double angleDelta) {
+        this.delta = delta;
+        this.angleDelta = angleDelta;
     }
 }
