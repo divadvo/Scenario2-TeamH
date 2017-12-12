@@ -73,4 +73,8 @@ public class ProblemParser {
         }
         return shapes;
     }
+<<<<<<< HEAD:src/team/h/io/ProblemParser.java
 }
+=======
+}
+>>>>>>> 912c8549b96695dd55509d62ee19d07787f794cf:src/team/h/ProblemParser.java
