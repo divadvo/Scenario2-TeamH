@@ -103,13 +103,13 @@ public class ControlPanel extends JPanel {
         sliderAngle.addChangeListener(e -> {
             int sliderValue = ((JSlider)e.getSource()).getValue();
             angle = 10 / sliderValue;
-            redrawProblem();
+            visualizerPanel.setDeltaAndAngle(delta, angle);
         });
 
         sliderDelta.addChangeListener(e -> {
             int sliderValue = ((JSlider)e.getSource()).getValue();
             delta = 1 / sliderValue;
-            redrawProblem();
+            visualizerPanel.setDeltaAndAngle(delta, angle);
         });
 
     }
@@ -157,7 +157,6 @@ public class ControlPanel extends JPanel {
         Problem currentProblem = problems.get(currentProblemNumber - 1);
         Solution currentSolution = solutions.get(currentProblemNumber - 1);
         Visualizer.TYPE type = (Visualizer.TYPE) jComboBox.getSelectedItem();
-        visualizerPanel.setDeltaAndAngle(delta, angle);
         visualizerPanel.setDrawingType(type);
         visualizerPanel.setProblem(currentProblem);
         visualizerPanel.setSolution(currentSolution);

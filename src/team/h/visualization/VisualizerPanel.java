@@ -35,7 +35,7 @@ public class VisualizerPanel extends JPanel {
     private ShapeAndShape chosenShape = null;
     private double shiftX = 0, shiftY = 0;
     private double angle = 0;
-    private double angleDelta = 1, delta = 1;
+    private double angleDelta = 0.5, delta = 1;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -55,7 +55,7 @@ public class VisualizerPanel extends JPanel {
                 for (ShapeAndShape shapeAndShape : drawnShapes) {
 //                    System.out.println("Shape "  + shapeAndShape.getDrawShape().getBounds2D());
                     if (shapeAndShape.getDrawShape().contains(p)) {
-                        System.out.println("Clicked  " + shapeAndShape.getOurShape().getTotalCost());
+                        System.out.println("Clicked  COST: " + shapeAndShape.getOurShape().getTotalCost());
                         chosenShape = shapeAndShape;
                     }
                 }
@@ -77,6 +77,9 @@ public class VisualizerPanel extends JPanel {
                 int keyCode = e.getKeyCode();
                 System.out.println("Pressed");
                 System.out.println(delta + "  " + angleDelta);
+
+                double deltaDeltaPrecision = 0.05;
+
                 switch (keyCode) {
                     case KeyEvent.VK_UP:
                         shiftY += delta;
@@ -102,8 +105,21 @@ public class VisualizerPanel extends JPanel {
                     case KeyEvent.VK_ESCAPE:
                         cancelChosenShape();
                         break;
+                    case KeyEvent.VK_O:
+                        angleDelta -= 0.1;
+                        break;
+                    case KeyEvent.VK_P:
+                        angleDelta += 0.1;
+                        break;
+                    case KeyEvent.VK_K:
+                        delta -= deltaDeltaPrecision;
+                        break;
+                    case KeyEvent.VK_L:
+                        delta += deltaDeltaPrecision;
+                        break;
                 }
-                System.out.println(shiftX + " " + shiftY);
+                System.out.println(delta + "   DELTA ---- ANGLE DELTA  " + angleDelta);
+//                System.out.println(shiftX + " " + shiftY);
 
                 redraw();
             }

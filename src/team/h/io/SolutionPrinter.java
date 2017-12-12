@@ -56,8 +56,16 @@ public class SolutionPrinter {
         for (Shape shape : solution.getShapes()) {
             result.append(shapeToString(shape));
         }
+
+        // remove last semicolon
+//        result.setLength(result.length() - 1);
+
 //        System.out.println(result.toString());
-        return result.toString();
+        return removeLastChar(result.toString());
+    }
+
+    private String removeLastChar(String str) {
+        return str.substring(0, str.length() - 2);
     }
 
     private String shapeToString(Shape shape) {
@@ -66,12 +74,12 @@ public class SolutionPrinter {
         for (int i = 0; i < shape.getPoints().size(); i++) {
             Point point = shape.getPoints().get(i);
 
-            String pointString = String.format("(%f,%f)", point.getX(), point.getY());
+            String pointString = String.format("(%.15f,%.15f)", point.getX(), point.getY());
             result.append(pointString);
 
 
             if(i == shape.getPoints().size() - 1) // if last -> add semicolon
-                result.append(";");
+                result.append("; ");
             else // otherwise comma and space
                 result.append(", ");
         }
