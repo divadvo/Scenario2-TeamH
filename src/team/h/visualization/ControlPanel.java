@@ -34,7 +34,7 @@ public class ControlPanel extends JPanel {
         this.solutions = problemsAndSolutions.getSolutions();
 
         initUI();
-        updateLabels();
+
         redrawProblem();
     }
 
@@ -61,7 +61,6 @@ public class ControlPanel extends JPanel {
         sliderProblemNumber.addChangeListener(e -> {
             int sliderValue = ((JSlider)e.getSource()).getValue();
             currentProblemNumber = sliderValue;
-            updateLabels();
             redrawProblem();
         });
 
@@ -93,9 +92,7 @@ public class ControlPanel extends JPanel {
         visualizerPanel.setProblem(currentProblem);
         visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();
-    }
 
-    private void updateLabels() {
         labelNumberOfProblems.setText("Number of problems: " + numberOfProblems);
         labelCurrentProblem.setText("Current Problem: " + currentProblemNumber);
     }

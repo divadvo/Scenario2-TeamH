@@ -19,29 +19,28 @@ public class VisualizerGUI extends JFrame {
         controlPanel = new ControlPanel(visualizerPanel, problemsAndSolutions);
 
         JPanel container = new JPanel();
-        container.setLayout(new BorderLayout());
-
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setResizeWeight(0.9);
-        splitPane.setEnabled(false);
-        splitPane.setDividerSize(1);
-
-        splitPane.add(visualizerPanel);
-        splitPane.add(controlPanel);
-
-        container.add(splitPane, BorderLayout.CENTER);
-
-//        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
-//        visualizerPanel = new VisualizerPanel();
-//        container.add(visualizerPanel);
+//        container.setLayout(new BorderLayout());
+//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+//        splitPane.setResizeWeight(0.9);
+//        splitPane.setEnabled(false);
+//        splitPane.setDividerSize(1);
 //
-//        controlPanel = new ControlPanel(problems);
-//        container.add(controlPanel);
+//        splitPane.add(visualizerPanel);
+//        splitPane.add(controlPanel);
+//
+//        container.add(splitPane, BorderLayout.CENTER);
+
+        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+        visualizerPanel.setMinimumSize(new Dimension(1280, 720));
+        container.add(visualizerPanel);
+        controlPanel.setMinimumSize(new Dimension(200, 720));
+        container.add(controlPanel);
+        container.setMinimumSize(new Dimension(1480, 720));
 
         this.add(container);
 
         setTitle(TITLE);
-        setSize(1280,720);
+        setSize(1480,720); // 1280
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
