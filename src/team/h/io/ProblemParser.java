@@ -51,7 +51,7 @@ public class ProblemParser {
     private List<Point> createPoints(String pointsString) {
         List<Point> points = new ArrayList<>();
         Matcher m = Pattern.compile("\\((.*?)\\)").matcher(pointsString);
-        while(m.find()) {
+        while (m.find()) {
             List<String> coordinates = Arrays.asList(m.group(1).split(","));
             points.add(new Point(Double.parseDouble(coordinates.get(0)), Double.parseDouble(coordinates.get(1))));
         }
@@ -73,8 +73,4 @@ public class ProblemParser {
         }
         return shapes;
     }
-<<<<<<< HEAD:src/team/h/io/ProblemParser.java
 }
-=======
-}
->>>>>>> 912c8549b96695dd55509d62ee19d07787f794cf:src/team/h/ProblemParser.java
