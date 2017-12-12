@@ -1,11 +1,9 @@
 package team.h;
 
-import java.util.List;
-
 public class PartsOfPolygon
 {
     //----------------------------------------------------------------------------------------------------
-    static class Angle
+    public static class Angle
     {
         private double value;
 
@@ -18,7 +16,6 @@ public class PartsOfPolygon
         {
             return value;
         }
-
 
         private double calculateAngleBetween(PartsOfPolygon.Edge edgeA, PartsOfPolygon.Edge edgeB)
         {
