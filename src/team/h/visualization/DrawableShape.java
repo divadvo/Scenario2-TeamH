@@ -1,6 +1,6 @@
 package team.h.visualization;
 
-import team.h.Point;
+import team.h.core.Point;
 
 import java.awt.geom.GeneralPath;
 import java.util.List;

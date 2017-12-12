@@ -1,4 +1,6 @@
-package team.h;
+package team.h.core;
+
+import team.h.core.Point;
 
 import java.util.List;
 

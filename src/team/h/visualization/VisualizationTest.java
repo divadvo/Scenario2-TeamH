@@ -1,28 +1,19 @@
 package team.h.visualization;
 
-import team.h.*;
+import team.h.algorithm.AllProblemSolver;
+import team.h.core.Problem;
+import team.h.core.ProblemsAndSolutions;
+import team.h.core.Solution;
+import team.h.io.ProblemParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VisualizationTest {
 
     public static void main(String[] args) {
-        new ProblemParser("input/problems.rfp").parse();
-
-        ArrayList<Point> roomPoints = new ArrayList<>();
-        roomPoints.add(new Point(0, 0));
-        roomPoints.add(new Point(20, 0));
-        roomPoints.add(new Point(20, 10));
-        roomPoints.add(new Point(10, 10));
-        roomPoints.add(new Point(10, 20));
-        roomPoints.add(new Point(0, 20));
-        Room room = new Room(roomPoints);
-
-        Problem problem = new Problem(1, room, new ArrayList<Shape>());
-        List<Problem> problemList = new ArrayList<>();
-        problemList.add(problem);
-
-        new Visualizer(problemList).visualize();
+        List<Problem> problems = new ProblemParser("input/problems.rfp").parse();
+        List<Solution> solutions = new AllProblemSolver(problems).solve();
+//        new SolutionPrinter("output/", solutions).output();
+        new Visualizer(new ProblemsAndSolutions(problems, solutions)).visualize();
     }
 }
