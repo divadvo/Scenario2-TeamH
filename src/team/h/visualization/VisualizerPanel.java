@@ -71,8 +71,10 @@ public class VisualizerPanel extends JPanel {
         calculateAndSetOrigin(g2);
 
         // Draw axis
-        g2.setColor(Color.GREEN);
-        g2.drawRect(0, 0, 1000, 1000);
+        g2.setColor(Color.DARK_GRAY);
+//        g2.drawRect(0, 0, 1000, 1000);
+        g2.drawLine(-1000, 0, 1000, 0);
+        g2.drawLine(0, -1000, 0, 1000);
 
         ColorRange colorRange = generateColorRange(shapeList);
 
@@ -85,6 +87,8 @@ public class VisualizerPanel extends JPanel {
             if(true) {
                 g2.setColor(colorRange.generateColor(shape.getTotalCost()));
                 g2.fill(path);
+                g2.setColor(Color.BLUE);
+                g2.draw(path);
             }
             else {
 
@@ -266,6 +270,9 @@ public class VisualizerPanel extends JPanel {
 
         Shape smallestCostShape = shapesSortedByCost.get(0);
         Shape highestCostShape = shapesSortedByCost.get(shapesSortedByCost.size() - 1);
+
+//        for(int i = shapesSortedByCost.size() - 1; i >= 0; i--)
+//            System.out.print(shapesSortedByCost.get(i).getTotalCost() + "," + shapesSortedByCost.get(i).getArea() + "   ");
 
         return new ColorRange(smallestCostShape.getTotalCost(), highestCostShape.getTotalCost());
     }

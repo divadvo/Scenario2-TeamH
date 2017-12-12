@@ -27,13 +27,27 @@ public class Shape {
     }
 
     private void calculateArea() {
+//        double sum = 0;
+//        for (int i = 0; i < points.size() - 1; i++) {
+//            Point p1 = points.get(i);
+//            Point p2 = points.get(i+1);
+//            // TODO: solve negative area
+//            sum = sum + (p1.getX() * p2.getY()) - (p1.getY() * p2.getX());
+//            // sum += (points[i].X * points[i + 1].Y) - (points[i + 1].X * points[i].Y);
+//        }
+//        this.area = sum / 2;
+
+        // With negative values allowed:
         double sum = 0;
-        for (int i = 0; i < points.size() - 1; i++) {
-            Point p1 = points.get(i);
-            Point p2 = points.get(i+1);
-            sum = sum + p1.getX() * p2.getY() - p1.getY() * p2.getX();
+        int j = points.size() - 1;
+        for (int i = 0; i < points.size(); i++)
+        {
+            Point pi = points.get(i);
+            Point pj = points.get(j);
+            sum += (pj.getX() + pi.getX()) * (pj.getY() - pi.getY());
+            j = i;  // j is previous vertex to i
         }
-        this.area = sum;
+        this.area = Math.abs(sum / 2);
     }
 
     public double getCostPerUnit() {

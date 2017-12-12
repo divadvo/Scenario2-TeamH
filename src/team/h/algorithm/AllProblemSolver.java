@@ -1,5 +1,6 @@
 package team.h.algorithm;
 
+import team.h.algorithm.david.TestSolver;
 import team.h.core.Problem;
 import team.h.core.Solution;
 
@@ -18,7 +19,7 @@ public class AllProblemSolver {
         List<Solution> solutions = new ArrayList<>();
 
         for(Problem problem : problems) {
-            Solution solution = new Solver(problem).solve();
+            Solution solution = new TestSolver(problem).solve();
             solutions.add(solution);
         }
         return solutions;

@@ -5,6 +5,7 @@ import team.h.core.ProblemsAndSolutions;
 import team.h.core.Solution;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -50,12 +51,18 @@ public class ControlPanel extends JPanel {
         createComboBox();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//        this.setLayout(new GridBagLayout());
+//        GridBagConstraints c = new GridBagConstraints();
+
+
         this.add(labelNumberOfProblems);
         this.add(labelCurrentProblem);
         this.add(sliderProblemNumber);
         this.add(jComboBoxProblem);
         this.add(buttonRedraw);
         this.add(jComboBox);
+        this.add(Box.createVerticalGlue());
+
     }
 
     private void createProblemSlider() {
