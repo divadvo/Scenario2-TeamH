@@ -41,6 +41,10 @@ public class VisualizerPanel extends JPanel {
     private boolean generatedRandomBefore = false;
 
     private List<ShapeAndShape> randomShapesGenerated;
+    private boolean selectingFirstPoint = false;
+    private boolean selectingSecondPoint = false;
+
+    private Point2D firstPoint, secondPoint;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -65,6 +69,18 @@ public class VisualizerPanel extends JPanel {
                 super.mouseClicked(me);
 
                 Point2D p = ourCoordinatesFromMouseCoordinates(me.getX(), me.getY());
+
+                if(selectingFirstPoint) {
+                    firstPoint = p;
+                    selectingFirstPoint = false;
+                    selectingSecondPoint = true;
+                    System.out.println("First Point " + firstPoint);
+                }
+                else if(selectingSecondPoint) {
+                    secondPoint = p;
+                    selectingSecondPoint = false;
+                    System.out.println("Second Point " + secondPoint);
+                }
 
                 if (pointSelectionModeOn) {
                     System.out.println("Point selection");
@@ -164,6 +180,9 @@ public class VisualizerPanel extends JPanel {
                     case KeyEvent.VK_X:
                         dropRandomlyUntilImpossible();
                         break;
+                    case KeyEvent.VK_D:
+                        startSelectingArea();
+                        break;
 
 
                 }
@@ -177,6 +196,11 @@ public class VisualizerPanel extends JPanel {
 
             }
         });
+    }
+
+    private void startSelectingArea() {
+        selectingFirstPoint = true;
+        selectingSecondPoint = false;
     }
 
     private void dropRandomlyUntilImpossible() {
@@ -193,6 +217,7 @@ public class VisualizerPanel extends JPanel {
     }
 
     private int randomlyDropShapesInsideRoom() {
+        System.out.println("RUN RANDOM DROPPER");
         List<Shape> shapeList = getShapesWithoutSolution();
 
         for (Shape shape : shapeList) {
@@ -241,7 +266,9 @@ public class VisualizerPanel extends JPanel {
             boolean foundNoPlace = false;
 
             do {
-                newShape = shape.translate(Utils.randomNumber() * 1000, Utils.randomNumber() * 1000);
+                Point randomPoint = Utils.generateRandomPointBetween(firstPoint, secondPoint);
+                newShape = shape.translate(randomPoint.getX(), randomPoint.getY());
+//                newShape = shape.translate(Utils.randomNumber() * 1000, Utils.randomNumber() * 1000);
                 List<Point> shapePoints = newShape.getPoints();
                 path = new DrawableShape(shapePoints).generatePath();
                 i++;
@@ -406,6 +433,10 @@ public class VisualizerPanel extends JPanel {
         g2.translate(0, getHeight() - 1);
         g2.scale(1, -1);
 
+        if(firstPoint != null && secondPoint != null) {
+            drawArea(g2);
+        }
+
         // Paint the problem
         if (problem != null)
             drawProblem(g2);
@@ -414,6 +445,25 @@ public class VisualizerPanel extends JPanel {
 
         if (chosenShape != null)
             drawChosenShape(g2);
+    }
+
+    private Color areaColor = new Color(149, 165, 166);
+
+    private void drawArea(Graphics2D g2) {
+        AffineTransform oldTransform = g2.getTransform();
+        System.out.println("DrawArea");
+        calculateAndSetOrigin(g2);
+
+        g2.setColor(areaColor);
+
+        Rectangle rect= new Rectangle(new java.awt.Point((int)firstPoint.getX(), (int)firstPoint.getY()));
+        rect.add(new java.awt.Point((int)secondPoint.getX(), (int)secondPoint.getY()));
+
+        g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+//        g2.fillRect(0, 0, 100, 100);
+//        g2.fillRect((int)firstPoint.getX(), (int)firstPoint.getY(), (int)(secondPoint.getX() - firstPoint.getX()), (int)(secondPoint.getY() - firstPoint.getY()));
+        g2.setTransform(oldTransform);
     }
 
     private void drawChosenShape(Graphics2D g2) {
