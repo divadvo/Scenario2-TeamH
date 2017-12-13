@@ -21,6 +21,10 @@ public class ColorRange {
         double red = ((value-min)/(max-min))*255; // 255
         int redInt = (int) red;
 //        System.out.println(red + " RED " + redInt);
+
+        if(redInt < 0 || redInt > 255)
+            return Color.PINK;
+
         Color color = new Color(redInt, 200, 50);
 
         if(value == max)

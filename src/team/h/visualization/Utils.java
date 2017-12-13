@@ -4,6 +4,7 @@ package team.h.visualization;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.util.Random;
 
 public class Utils {
@@ -32,5 +33,17 @@ public class Utils {
 
     public static double randomNumber() {
         return new Random().nextDouble() - 0.5; // -0.5 to +0.5
+    }
+
+    public static team.h.core.Point generateRandomPointBetween(Point2D firstPoint, Point2D secondPoint) {
+        double x = randomInRange(firstPoint.getX(), secondPoint.getX());
+        double y = randomInRange(firstPoint.getY(), secondPoint.getY());
+        return new team.h.core.Point(x, y);
+    }
+
+    private static double randomInRange(double rangeMin, double rangeMax) {
+        Random r = new Random();
+        double randomValue = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
+        return randomValue;
     }
 }
