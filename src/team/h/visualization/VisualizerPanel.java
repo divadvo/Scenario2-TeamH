@@ -38,6 +38,9 @@ public class VisualizerPanel extends JPanel {
     private double angleDelta = 0.5, delta = 1;
     private boolean pointSelectionModeOn = false;
     private double targetSize = 0.4;
+    private boolean generatedRandomBefore = false;
+
+    private List<ShapeAndShape> randomShapesGenerated;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -155,6 +158,12 @@ public class VisualizerPanel extends JPanel {
                     case KeyEvent.VK_DIVIDE:
                         targetSize = 0.4;
                         break;
+                    case KeyEvent.VK_Z:
+                        randomlyDropShapesInsideRoom();
+                        break;
+                    case KeyEvent.VK_X:
+                        dropRandomlyUntilImpossible();
+                        break;
 
 
                 }
@@ -168,6 +177,95 @@ public class VisualizerPanel extends JPanel {
 
             }
         });
+    }
+
+    private void dropRandomlyUntilImpossible() {
+        int itemsAddedLastTime = 1;
+        int timesInARowNoneWereAdded = 0;
+        do {
+            itemsAddedLastTime = randomlyDropShapesInsideRoom();
+            System.out.println("ITEMS ADDED: " + itemsAddedLastTime);
+            if(itemsAddedLastTime == 0)
+                timesInARowNoneWereAdded++;
+            if(itemsAddedLastTime > 0)
+                timesInARowNoneWereAdded = 0;
+        } while(timesInARowNoneWereAdded < 5);
+    }
+
+    private int randomlyDropShapesInsideRoom() {
+        List<Shape> shapeList = getShapesWithoutSolution();
+
+        for (Shape shape : shapeList) {
+            List<Point> shapePoints = shape.getPoints();
+            GeneralPath path = new DrawableShape(shapePoints).generatePath();
+            Rectangle rectangle = path.getBounds();
+
+            AffineTransform affineTransform = new AffineTransform();
+            if (rectangle.x < 0)
+                affineTransform.scale(-1, 1);
+
+            if (rectangle.y < 0)
+                affineTransform.scale(1, -1);
+
+            path.transform(affineTransform);
+        }
+
+
+        Collections.sort(shapeList, Comparator.comparing(o -> -o.getTotalCost()));
+
+//        g2.setColor(Color.BLUE);
+        Set<java.awt.Shape> addedShapes = new HashSet<>();
+//        addedShapes.add(roomPath);
+; //
+        for(Shape solutionShape : solution.getShapes()) {
+            List<Point> shapePoints = solutionShape.getPoints();
+            GeneralPath path = new DrawableShape(shapePoints).generatePath();
+            addedShapes.add(path);
+        }
+
+//        ColorRange colorRange = ColorRange.generateColorRange(shapeList);
+
+//        calculateAndSetOrigin(g2);
+
+        int itemAdded = 0;
+
+        int something = 0;
+        for (Shape shape : shapeList) {
+            something++;
+//            System.out.println(something);
+            GeneralPath path;
+            Shape newShape;
+            int i = 1;
+
+            boolean somethingIsWrong = false;
+            boolean foundNoPlace = false;
+
+            do {
+                newShape = shape.translate(Utils.randomNumber() * 1000, Utils.randomNumber() * 1000);
+                List<Point> shapePoints = newShape.getPoints();
+                path = new DrawableShape(shapePoints).generatePath();
+                i++;
+                somethingIsWrong = !Utils.isShapeInsideAnother(roomPath, path) || doesIntersectWithAnyOther(path, addedShapes);
+                if(i > 10 * shape.getCostPerUnit())
+                    foundNoPlace = true;
+                if(!somethingIsWrong || foundNoPlace)
+                    break;
+            } while (true);
+
+//            Color color = colorRange.generateColor(shape.getTotalCost());
+//            g2.setColor(color);
+//            g2.fill(path);
+//            randomShapesGenerated.add(new ShapeAndShape(path, shape));
+
+            if(!somethingIsWrong && !foundNoPlace) {
+                removedShapes.add(shape);
+                solution.getShapes().add(newShape);
+
+                addedShapes.add(path);
+                itemAdded++;
+            }
+        }
+        return itemAdded;
     }
 
     private void generateSolution() {
@@ -277,6 +375,11 @@ public class VisualizerPanel extends JPanel {
         System.out.println("SOLUTION TOTAL COST: " + totalCost);
 
         cancelChosenShape();
+    }
+
+    public void resetGeneratedRandomBefore() {
+        generatedRandomBefore = false;
+        randomShapesGenerated = new ArrayList<>();
     }
 
     public void setProblem(Problem problem) {
@@ -437,22 +540,43 @@ public class VisualizerPanel extends JPanel {
 
         calculateAndSetOrigin(g2);
 
-        for (Shape shape : shapeList) {
-            GeneralPath path;
-            int i = 1;
-            do {
-                Shape newShape = shape.translate(Utils.randomNumber() * i, Utils.randomNumber() * i);
-                List<Point> shapePoints = newShape.getPoints();
-                path = new DrawableShape(shapePoints).generatePath();
-                i++;
-            } while (doesIntersectWithAnyOther(path, addedShapes));
+        if(!generatedRandomBefore) {
+            for (Shape shape : shapeList) {
+                GeneralPath path;
+                int i = 1;
+                do {
+                    Shape newShape = shape.translate(Utils.randomNumber() * i, Utils.randomNumber() * i);
+                    List<Point> shapePoints = newShape.getPoints();
+                    path = new DrawableShape(shapePoints).generatePath();
+                    i++;
+                } while (doesIntersectWithAnyOther(path, addedShapes));
+//                System.out.println(i);
 
-            Color color = colorRange.generateColor(shape.getTotalCost());
-            g2.setColor(color);
-            g2.fill(path);
-            drawnShapes.add(new ShapeAndShape(path, shape));
+                Color color = colorRange.generateColor(shape.getTotalCost());
+                g2.setColor(color);
+                g2.fill(path);
+                drawnShapes.add(new ShapeAndShape(path, shape));
+                randomShapesGenerated.add(new ShapeAndShape(path, shape));
 
-            addedShapes.add(path);
+                addedShapes.add(path);
+            }
+            generatedRandomBefore = true;
+        }
+        else {
+            for(ShapeAndShape shapeAndShape : randomShapesGenerated) {
+                Color color = colorRange.generateColor(shapeAndShape.getOurShape().getTotalCost());
+                boolean contains = false;
+                for (Shape shape1 : removedShapes) {
+                    if (shapeAndShape.getOurShape().equalsWithUUID(shape1)) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if(!contains) {
+                    g2.setColor(color);
+                    g2.fill(shapeAndShape.getDrawShape());
+                }
+            }
         }
     }
 

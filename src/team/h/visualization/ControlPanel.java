@@ -168,6 +168,7 @@ public class ControlPanel extends JPanel {
         visualizerPanel.setProblem(currentProblem);
         visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();
+        visualizerPanel.resetGeneratedRandomBefore();
 
         visualizerPanel.requestFocusInWindow();
 
