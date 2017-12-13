@@ -33,6 +33,7 @@ public class ControlPanel extends JPanel {
 
     private double angle = 1;
     private double delta = 1;
+    private JLabel labelPercentage;
 
     public ControlPanel(VisualizerPanel visualizerPanel, ProblemsAndSolutions problemsAndSolutions) {
         this.visualizerPanel = visualizerPanel;
@@ -68,6 +69,9 @@ public class ControlPanel extends JPanel {
         createComboBox();
         createDeltaSliders();
 
+        labelPercentage = new JLabel();
+
+
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 //        this.setLayout(new GridBagLayout());
 //        GridBagConstraints c = new GridBagConstraints();
@@ -79,9 +83,10 @@ public class ControlPanel extends JPanel {
         this.add(jComboBoxProblem);
         this.add(buttonRedraw);
         this.add(jComboBox);
-        this.add(buttonGenerateSolution);
-        this.add(sliderAngle);
-        this.add(sliderDelta);
+        this.add(labelPercentage);
+//        this.add(buttonGenerateSolution);
+//        this.add(sliderAngle);
+//        this.add(sliderDelta);
         this.add(Box.createVerticalGlue());
 
     }
@@ -132,7 +137,9 @@ public class ControlPanel extends JPanel {
     private void createComboBox() {
 //        String[] types = getNames(Visualizer.TYPE.class);
         jComboBox = new JComboBox<>(Visualizer.TYPE.values());
+        jComboBox.setSelectedItem(Visualizer.TYPE.BOX);
         jComboBox.addActionListener (e -> redrawProblem());
+
 
 //        int a[] = IntStream.range(1, problems.size()).toArray();
 //        List<Integer> integers = Arrays.asList(a);
@@ -169,5 +176,8 @@ public class ControlPanel extends JPanel {
 
         labelNumberOfProblems.setText("Number of problems: " + numberOfProblems);
         labelCurrentProblem.setText("Current Problem: " + currentProblemNumber);
+
+        double percentage = currentSolution.getTotalArea() / currentProblem.getRoom().getArea() * 100;
+        this.labelPercentage.setText(String.format("<html> Percentage:  %.3f %%  <br/> %f <br/> %f</html>", percentage, currentSolution.getTotalArea(), currentProblem.getRoom().getArea()));
     }
 }

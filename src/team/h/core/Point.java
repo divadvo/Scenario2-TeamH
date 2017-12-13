@@ -35,4 +35,9 @@ public class Point {
         Point other = (Point) obj;
         return x == other.getX() && y == other.getY();
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%f,%f)", x, y);
+    }
 }

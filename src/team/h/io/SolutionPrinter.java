@@ -28,7 +28,7 @@ public class SolutionPrinter {
     }
 
     public void output() {
-        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("YYYY-MM-dd_hh-mm-ss");
+        DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("YYYY-MM-dd_HH-mm-ss");
         String time = timeStampPattern.format(java.time.LocalDateTime.now());
 //        String time = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
         String fileName = String.format("%s_%.2f_%.2f.solutions", time, totalCost(), totalArea());

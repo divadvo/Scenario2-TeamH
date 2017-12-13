@@ -1,6 +1,7 @@
 package team.h.core;
 
 import team.h.core.Point;
+import team.h.core.polygons.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,11 @@ public class Shape {
         return area;
     }
 
+    public double recalculateArea() {
+        calculateArea();
+        return area;
+    }
+
     public List<Point> getPoints() {
         return points;
     }
@@ -80,6 +86,10 @@ public class Shape {
 
     public Shape rotate(double angle) {
         List<Point> newPoints = new ArrayList<>();
+
+        if (points.isEmpty())
+            return new Shape(costPerUnit, newPoints);
+
         Point center = points.get(0);
         for (Point point : points) {
             Point newPoint = rotatePoint(point, center, angle);
@@ -106,8 +116,8 @@ public class Shape {
         //newX = centerX + ( cosX * (point2X-centerX) + sinX * (point2Y -centerY))
         //newY = centerY + ( -sinX * (point2X-centerX) + cosX * (point2Y -centerY))
 
-        double newX = center.getX() + ( Math.cos(x) * (pt.getX()-center.getX()) + Math.sin(x) * (pt.getY() - center.getY()));
-        double newY = center.getY() + ( -Math.sin(x) * (pt.getX()-center.getX()) + Math.cos(x) * (pt.getY() - center.getY()));
+        double newX = center.getX() + (Math.cos(x) * (pt.getX() - center.getX()) + Math.sin(x) * (pt.getY() - center.getY()));
+        double newY = center.getY() + (-Math.sin(x) * (pt.getX() - center.getX()) + Math.cos(x) * (pt.getY() - center.getY()));
 
         Point point = new Point(newX, newY);
         return point;
@@ -125,5 +135,34 @@ public class Shape {
 
     public boolean equalsWithUUID(Shape other) {
         return this.equals(other) && this.uuid.equals(other.getUUID());
+    }
+
+    public void addPoint(Point selectedPoint) {
+        points.add(selectedPoint);
+    }
+
+    public boolean canBeTransformedInto(Shape anotherShape) {
+//        if (this.points.size() != anotherShape.getPoints().size())
+//            return false;
+
+//        for(int i = 0; i < points.size() - 1; i++) {
+//            if(this.distanceBetween(i, i+1) != anotherShape.distanceBetween(i, i+1))
+//                return false;
+//        }
+
+//        if(this.getArea() != anotherShape.getArea())
+//            return false;
+
+        Polygon polygonThis = new Polygon(points);
+        Polygon polygonOther = new Polygon(anotherShape.getPoints());
+        return polygonThis.isSame(polygonOther);
+    }
+
+    private double distanceBetween(int i, int j) {
+        Point p0 = points.get(i);
+        Point p1 = points.get(j);
+        Point vector = p1.translate(-p0.getX(), -p0.getY());
+        double d2 = vector.getX() * vector.getX() + vector.getY() * vector.getY();
+        return d2;
     }
 }

@@ -36,6 +36,8 @@ public class VisualizerPanel extends JPanel {
     private double shiftX = 0, shiftY = 0;
     private double angle = 0;
     private double angleDelta = 0.5, delta = 1;
+    private boolean pointSelectionModeOn = false;
+    private double targetSize = 0.4;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -61,10 +63,17 @@ public class VisualizerPanel extends JPanel {
 
                 Point2D p = ourCoordinatesFromMouseCoordinates(me.getX(), me.getY());
 
-                for (ShapeAndShape shapeAndShape : drawnShapes) {
-                    if (shapeAndShape.getDrawShape().contains(p)) {
-                        System.out.println("Clicked  COST: " + shapeAndShape.getOurShape().getTotalCost());
-                        chosenShape = shapeAndShape;
+                if (pointSelectionModeOn) {
+                    System.out.println("Point selection");
+                    extendNewSolutionShape(p.getX(), p.getY());
+                }
+
+                if (chosenShape == null) {
+                    for (ShapeAndShape shapeAndShape : drawnShapes) {
+                        if (shapeAndShape.getDrawShape().contains(p)) {
+                            System.out.println("Clicked  COST: " + shapeAndShape.getOurShape().getTotalCost());
+                            chosenShape = shapeAndShape;
+                        }
                     }
                 }
 
@@ -108,7 +117,7 @@ public class VisualizerPanel extends JPanel {
                         angle += angleDelta;
                         break;
                     case KeyEvent.VK_A:
-                        angle += 45;
+                        angle = 180 - 138.70878322203367;
                         break;
                     case KeyEvent.VK_ESCAPE:
                         cancelChosenShape();
@@ -126,7 +135,28 @@ public class VisualizerPanel extends JPanel {
                         delta += deltaDeltaPrecision;
                         break;
                     case KeyEvent.VK_M:
-                        rotateUntilFits();
+                        rotateUntilFits(1);
+                        break;
+                    case KeyEvent.VK_N:
+                        rotateUntilFits(-1);
+                        break;
+                    case KeyEvent.VK_V:
+                        pointSelectionMode();
+                        break;
+                    case KeyEvent.VK_G:
+                        generateSolution();
+                        break;
+                    case KeyEvent.VK_ADD:
+                        targetSize += 0.1;
+                        break;
+                    case KeyEvent.VK_SUBTRACT:
+                        targetSize -= 0.1;
+                        break;
+                    case KeyEvent.VK_DIVIDE:
+                        targetSize = 0.4;
+                        break;
+
+
                 }
                 System.out.println(delta + "   DELTA ---- ANGLE DELTA  " + angleDelta);
 
@@ -140,13 +170,91 @@ public class VisualizerPanel extends JPanel {
         });
     }
 
-    private void rotateUntilFits() {
-//        GeneralPath pathNew = new DrawableShape(shapePointsNew).generatePath();
+    private void generateSolution() {
+        System.out.println("GENERATE SOLUTION");
+        List<Solution> sols = new ArrayList<>();
+        sols.add(solution);
+        new SolutionPrinter("output/", sols).output();
+    }
+
+    private void extendNewSolutionShape(double pX, double pY) {
+        Point selectedPoint = null;
+
+        for (Point roomPoint : problem.getRoom().getPoints()) {
+            Point vector = new Point(pX, pY).translate(-roomPoint.getX(), -roomPoint.getY());
+            double d2 = vector.getX() * vector.getX() + vector.getY() * vector.getY();
+            if (d2 < 0.1) {
+                System.out.println(roomPoint);
+                selectedPoint = roomPoint;
+            }
+        }
+
+        if (selectedPoint != null && pointSelectionModeOn) {
+            chosenShape.getOurShape().addPoint(selectedPoint);
+
+            List<Shape> shapesToCheck = new ArrayList<>();
+            for (Shape givenShape : problem.getShapes()) {
+                if (givenShape.getArea() >= chosenShape.getOurShape().recalculateArea()) {
+//                    System.out.println("Added");
+                    shapesToCheck.add(givenShape);
+                } else {
+//                    System.out.println("Not added");
+                }
+            }
+
+            for (Shape givenShape : shapesToCheck) {
+                if (givenShape.canBeTransformedInto(chosenShape.getOurShape())) {
+                    System.out.println("Can be created");
+                } else {
+//                    System.out.println("Cannot");
+                }
+            }
+
+//            for(Shape givenShape : problem.getShapes()) {
+////                if (givenShape.canBeTransformedInto(chosenShape.getOurShape())) {
+////                    System.out.println("Can be created");
+////                }
+////                else {
+////                    System.out.println("Cannot");
+////                }
 //
-//        do {
-//            angle+=0.1;
-//            Shape newShape = chosenShape.getOurShape().translate(shiftX, shiftY).rotate(angle);
-//        } while();
+////                Shape chosenShapeOur = chosenShape.getOurShape();
+////                List<Point> shapePoints = chosenShapeOur.getPoints();
+////                GeneralPath path = new DrawableShape(shapePoints).generatePath();
+////
+////                List<Point> givenShapePoints = givenShape.getPoints();
+////                GeneralPath pathGiven = new DrawableShape(shapePoints).generatePath();
+////
+////                Area areaOur = new Area(path);
+////                Area areaGiven = new Area(pathGiven);
+//
+//                if (givenShape.canBeTransformedInto(chosenShape.getOurShape())) {
+//                    System.out.println("Can be created");
+//                }
+//                else {
+//                    System.out.println("Cannot");
+//                }
+//
+//            }
+        }
+    }
+
+    private void pointSelectionMode() {
+        pointSelectionModeOn = true;
+        System.out.println("V");
+        chosenShape = new ShapeAndShape(new DrawableShape(new ArrayList<Point>()).generatePath(), new Shape(0, new ArrayList<>()));
+    }
+
+    private void rotateUntilFits(int i) {
+        GeneralPath path;
+        do {
+            angle += 0.1 * i;
+            Shape chosenShapeOur = chosenShape.getOurShape();
+            Shape newShape = chosenShapeOur.translate(shiftX, shiftY).rotate(angle);
+            List<Point> shapePoints = newShape.getPoints();
+            path = new DrawableShape(shapePoints).generatePath();
+        } while (Utils.areShapesIntersecting(roomPath, path));
+        redraw();
     }
 
     private void cancelChosenShape() {
@@ -365,14 +473,13 @@ public class VisualizerPanel extends JPanel {
     }
 
     private void drawShapesBox(Graphics2D g2) {
-        System.out.println("BOX");
         drawShapes(g2);
     }
 
     private void drawShapes(Graphics2D g2) {
         List<Shape> shapeList = getShapesWithoutSolution();
 
-        System.out.println("Number of shapes: " + shapeList.size());
+//        System.out.println("Number of shapes: " + shapeList.size());
         g2.setColor(Color.BLUE);
 
         Set<java.awt.Shape> addedShapes = new HashSet<>();
@@ -398,8 +505,7 @@ public class VisualizerPanel extends JPanel {
             addedShapes.add(path);
             Rectangle2D bounds = path.getBounds2D();
             currentX += bounds.getWidth() * 1.2;
-            if (currentX + bounds.getX() > this.getWidth())
-            {
+            if (currentX + bounds.getX() > this.getWidth()) {
                 currentX = 0;
                 currentY += bounds.getHeight();
             }
@@ -444,7 +550,8 @@ public class VisualizerPanel extends JPanel {
         roomBounds = roomPath.getBounds();
         double max = Math.max(roomBounds.getWidth(), roomBounds.getHeight());
 
-        double targetSize = 0.2;
+//        targetSize = 0.4;
+        System.out.println("Target SIZE: " + targetSize);
         double partOfScreen = max / this.getHeight();
         double scalingFactor = targetSize / partOfScreen;
 

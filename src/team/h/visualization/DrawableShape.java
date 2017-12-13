@@ -16,6 +16,9 @@ public class DrawableShape {
     public GeneralPath generatePath() {
         GeneralPath path = new GeneralPath();
 
+        if(points.isEmpty())
+            return path;
+
         Point firstPoint = points.get(0);
         path.moveTo(firstPoint.getX(), firstPoint.getY());
 
