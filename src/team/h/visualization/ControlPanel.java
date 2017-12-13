@@ -106,13 +106,13 @@ public class ControlPanel extends JPanel {
         sliderDelta.setPaintLabels(true);
 
         sliderAngle.addChangeListener(e -> {
-            int sliderValue = ((JSlider)e.getSource()).getValue();
+            int sliderValue = ((JSlider) e.getSource()).getValue();
             angle = 10 / sliderValue;
             visualizerPanel.setDeltaAndAngle(delta, angle);
         });
 
         sliderDelta.addChangeListener(e -> {
-            int sliderValue = ((JSlider)e.getSource()).getValue();
+            int sliderValue = ((JSlider) e.getSource()).getValue();
             delta = 1 / sliderValue;
             visualizerPanel.setDeltaAndAngle(delta, angle);
         });
@@ -123,7 +123,7 @@ public class ControlPanel extends JPanel {
         sliderProblemNumber = new JSlider(1, numberOfProblems, 1);
 
         sliderProblemNumber.addChangeListener(e -> {
-            int sliderValue = ((JSlider)e.getSource()).getValue();
+            int sliderValue = ((JSlider) e.getSource()).getValue();
             currentProblemNumber = sliderValue;
             redrawProblem();
         });
@@ -138,18 +138,18 @@ public class ControlPanel extends JPanel {
 //        String[] types = getNames(Visualizer.TYPE.class);
         jComboBox = new JComboBox<>(Visualizer.TYPE.values());
         jComboBox.setSelectedItem(Visualizer.TYPE.BOX);
-        jComboBox.addActionListener (e -> redrawProblem());
+        jComboBox.addActionListener(e -> redrawProblem());
 
 
 //        int a[] = IntStream.range(1, problems.size()).toArray();
 //        List<Integer> integers = Arrays.asList(a);
         jComboBoxProblem = new JComboBox<>();
-        for(int i = 1; i <= problems.size(); i++)
+        for (int i = 1; i <= problems.size(); i++)
             jComboBoxProblem.addItem(i);
 
-        jComboBoxProblem.addActionListener (new ActionListener () {
+        jComboBoxProblem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int i = (Integer)jComboBoxProblem.getSelectedItem();
+                int i = (Integer) jComboBoxProblem.getSelectedItem();
                 currentProblemNumber = i;
                 redrawProblem();
             }
@@ -179,6 +179,9 @@ public class ControlPanel extends JPanel {
         labelCurrentProblem.setText("Current Problem: " + currentProblemNumber);
 
         double percentage = currentSolution.getTotalArea() / currentProblem.getRoom().getArea() * 100;
-        this.labelPercentage.setText(String.format("<html> Percentage:  %.3f %%  <br/> %f <br/> %f</html>", percentage, currentSolution.getTotalArea(), currentProblem.getRoom().getArea()));
+        List<Solution> sols = new ArrayList<>();
+        sols.add(currentSolution);
+        double totalCost = new SolutionPrinter("output/", sols).totalCost();
+        this.labelPercentage.setText(String.format("<html> Percentage:  %.3f %%  <br/> %f <br/> %f <br/><br/>C %f</html>", percentage, currentSolution.getTotalArea(), currentProblem.getRoom().getArea(), totalCost));
     }
 }

@@ -451,7 +451,7 @@ public class VisualizerPanel extends JPanel {
 
     private void drawArea(Graphics2D g2) {
         AffineTransform oldTransform = g2.getTransform();
-        System.out.println("DrawArea");
+//        System.out.println("DrawArea");
         calculateAndSetOrigin(g2);
 
         g2.setColor(areaColor);
@@ -725,7 +725,7 @@ public class VisualizerPanel extends JPanel {
         double max = Math.max(roomBounds.getWidth(), roomBounds.getHeight());
 
 //        targetSize = 0.4;
-        System.out.println("Target SIZE: " + targetSize);
+//        System.out.println("Target SIZE: " + targetSize);
         double partOfScreen = max / this.getHeight();
         double scalingFactor = targetSize / partOfScreen;
 
