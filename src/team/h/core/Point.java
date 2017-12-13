@@ -29,4 +29,10 @@ public class Point {
 //        this.x += dx;
 //        this.y += dy;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Point other = (Point) obj;
+        return x == other.getX() && y == other.getY();
+    }
 }

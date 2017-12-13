@@ -9,8 +9,6 @@ public class Solution {
     private int solutionNumber;
     private List<Shape> shapes;
 
-    private double totalCost;
-    private double totalArea;
 
     public Solution(int solutionNumber, List<Shape> shapes) {
         this.solutionNumber = solutionNumber;
@@ -26,10 +24,16 @@ public class Solution {
     }
 
     public double getTotalCost() {
+        double totalCost = 0;
+        for(Shape shape : shapes)
+            totalCost += shape.getTotalCost();
         return totalCost;
     }
 
     public double getTotalArea() {
+        double totalArea = 0;
+        for(Shape shape : shapes)
+            totalArea += shape.getArea();
         return totalArea;
     }
 }

@@ -4,6 +4,7 @@ package team.h.visualization;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.util.Random;
 
 public class Utils {
 
@@ -27,5 +28,9 @@ public class Utils {
         // If the intersection is the same as the smaller shape,
         // then the smaller shape is inside the bigger
         return !areaBigger.isEmpty() && areaB.equals(areaBigger);
+    }
+
+    public static double randomNumber() {
+        return new Random().nextDouble() - 0.5; // -0.5 to +0.5
     }
 }
