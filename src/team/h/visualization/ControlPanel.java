@@ -162,6 +162,8 @@ public class ControlPanel extends JPanel {
         visualizerPanel.setSolution(currentSolution);
         visualizerPanel.redraw();
 
+        visualizerPanel.requestFocusInWindow();
+
         sliderProblemNumber.setValue(currentProblemNumber);
         jComboBoxProblem.setSelectedIndex(currentProblemNumber - 1);
 

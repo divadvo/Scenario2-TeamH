@@ -11,7 +11,7 @@ import java.util.List;
 public class VisualizationTest {
 
     public static void main(String[] args) {
-        List<Problem> problems = new ProblemParser("input/problem29.rfp").parse();
+        List<Problem> problems = new ProblemParser("input/problem12.rfp").parse();
         List<Solution> solutions = new AllProblemSolver(problems).solve();
 //        new SolutionPrinter("output/", solutions).output();
         new Visualizer(new ProblemsAndSolutions(problems, solutions)).visualize();
