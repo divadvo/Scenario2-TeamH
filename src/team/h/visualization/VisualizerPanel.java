@@ -36,7 +36,6 @@ public class VisualizerPanel extends JPanel {
     private double shiftX = 0, shiftY = 0;
     private double angle = 0;
     private double angleDelta = 0.5, delta = 1;
-
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
         addMouseListener(new MouseAdapter() {
@@ -116,6 +115,18 @@ public class VisualizerPanel extends JPanel {
                         break;
                     case KeyEvent.VK_L:
                         delta += deltaDeltaPrecision;
+                        break;
+                    case KeyEvent.VK_Z:
+                        delta = 0.01;
+                        break;
+                    case KeyEvent.VK_X:
+                        delta = 1;
+                        break;
+                    case KeyEvent.VK_C:
+                        angleDelta = 0.01;
+                        break;
+                    case KeyEvent.VK_V:
+                        angleDelta = 1;
                         break;
                 }
                 System.out.println(delta + "   DELTA ---- ANGLE DELTA  " + angleDelta);
@@ -283,7 +294,7 @@ public class VisualizerPanel extends JPanel {
 
         double max = Math.max(roomBounds.getWidth(), roomBounds.getHeight());
 
-        double targetSize = 0.2;
+        double targetSize = 0.5;
         double partOfScreen = max / this.getHeight();
         double scalingFactor = targetSize / partOfScreen;
 
