@@ -1,9 +1,21 @@
 package team.h.io;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import sun.net.www.http.HttpClient;
 import team.h.core.Point;
 import team.h.core.Shape;
 import team.h.core.Solution;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +32,8 @@ public class SolutionPrinter {
 
     private static final String TEAM = "granada";
     private static final String PASSWORD = "5u0op320foc1di7eov3vkl0349";
+    private String fileName;
+    private Path solutionOutputFilePath;
 
 
     public SolutionPrinter(String solutionFolderPath, List<Solution> solutions) {
@@ -31,9 +45,9 @@ public class SolutionPrinter {
         DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("YYYY-MM-dd_HH-mm-ss");
         String time = timeStampPattern.format(java.time.LocalDateTime.now());
 //        String time = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
-        String fileName = String.format("%s_%.2f_%.2f.solutions", time, totalCost(), totalArea());
+        fileName = String.format("%s_%.2f_%.2f.solutions", time, totalCost(), totalArea());
 
-        Path solutionOutputFilePath = Paths.get(solutionFolderPath, fileName);
+        solutionOutputFilePath = Paths.get(solutionFolderPath, fileName);
 
         List<String> lines = new ArrayList<>();
         lines.add(TEAM);
@@ -99,5 +113,42 @@ public class SolutionPrinter {
         for(Solution solution : solutions)
             area += solution.getTotalArea();
         return area;
+    }
+
+    public void upload() {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpPost httppost = new HttpPost("http://scenario.cs.ucl.ac.uk/upload");
+
+            FileBody bin = new FileBody(new File(solutionOutputFilePath.toUri()));
+
+            HttpEntity reqEntity = MultipartEntityBuilder.create()
+                    .addPart("file", bin)
+                    .build();
+
+
+            httppost.setEntity(reqEntity);
+
+            System.out.println("executing request " + httppost.getRequestLine());
+            CloseableHttpResponse response = httpclient.execute(httppost);
+            try {
+                System.out.println("----------------------------------------");
+                System.out.println(response.getStatusLine());
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    System.out.println("Response content length: " +    resEntity.getContentLength());
+//                    String content = EntityUtils.toString(resEntity);
+//                    System.out.println("Response: " +  content);
+                }
+                EntityUtils.consume(resEntity);
+            } catch (Exception e) {
+
+            } finally {
+                response.close();
+            }
+            httpclient.close();
+        } catch (Exception e) {
+
+        }
     }
 }

@@ -45,6 +45,11 @@ public class VisualizerPanel extends JPanel {
     private boolean selectingSecondPoint = false;
 
     private Point2D firstPoint, secondPoint;
+    private int centerOffsetX = 0;
+    private int centerOffsetY = 0;
+    private int deltaCenterOffset = 5;
+
+    private boolean showProblemShapes = true;
 
     public VisualizerPanel() {
         drawnShapes = new ArrayList<>();
@@ -70,13 +75,16 @@ public class VisualizerPanel extends JPanel {
 
                 Point2D p = ourCoordinatesFromMouseCoordinates(me.getX(), me.getY());
 
-                if(selectingFirstPoint) {
+                if (toRemoveSolutionShape) {
+                    removeSolutionShape(p);
+                }
+
+                if (selectingFirstPoint) {
                     firstPoint = p;
                     selectingFirstPoint = false;
                     selectingSecondPoint = true;
                     System.out.println("First Point " + firstPoint);
-                }
-                else if(selectingSecondPoint) {
+                } else if (selectingSecondPoint) {
                     secondPoint = p;
                     selectingSecondPoint = false;
                     System.out.println("Second Point " + secondPoint);
@@ -111,7 +119,7 @@ public class VisualizerPanel extends JPanel {
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
 
-                double deltaDeltaPrecision = 0.05;
+                double deltaDeltaPrecision = 0.1;
 
                 switch (keyCode) {
                     case KeyEvent.VK_UP:
@@ -183,8 +191,26 @@ public class VisualizerPanel extends JPanel {
                     case KeyEvent.VK_D:
                         startSelectingArea();
                         break;
-
-
+                    case KeyEvent.VK_U:
+                        toRemoveSolutionShape = true;
+                        break;
+                    case KeyEvent.VK_Q:
+                        removeAllSolutionShapes();
+                        break;
+                    case KeyEvent.VK_NUMPAD8:
+                        centerOffsetY += deltaCenterOffset;
+                        break;
+                    case KeyEvent.VK_NUMPAD2:
+                        centerOffsetY -= deltaCenterOffset;
+                        break;
+                    case KeyEvent.VK_NUMPAD6:
+                        centerOffsetX += deltaCenterOffset;
+                        break;
+                    case KeyEvent.VK_NUMPAD4:
+                        centerOffsetX -= deltaCenterOffset;
+                        break;
+                    case KeyEvent.VK_H:
+                        showProblemShapes = !showProblemShapes;
                 }
                 System.out.println(delta + "   DELTA ---- ANGLE DELTA  " + angleDelta);
 
@@ -198,6 +224,28 @@ public class VisualizerPanel extends JPanel {
         });
     }
 
+    private void removeAllSolutionShapes() {
+        solution.getShapes().clear();
+    }
+
+    private boolean toRemoveSolutionShape = false;
+
+    private void removeSolutionShape(Point2D p) {
+        Iterator<Shape> i = solution.getShapes().iterator();
+
+        while (i.hasNext()) {
+            Shape shape = i.next();
+
+            List<Point> shapePoints = shape.getPoints();
+            GeneralPath path = new DrawableShape(shapePoints).generatePath();
+            if (path.contains(p)) {
+                System.out.println("Clicked Solution COST: " + shape.getTotalCost());
+                i.remove();
+            }
+        }
+        toRemoveSolutionShape = false;
+    }
+
     private void startSelectingArea() {
         selectingFirstPoint = true;
         selectingSecondPoint = false;
@@ -209,11 +257,11 @@ public class VisualizerPanel extends JPanel {
         do {
             itemsAddedLastTime = randomlyDropShapesInsideRoom();
             System.out.println("ITEMS ADDED: " + itemsAddedLastTime);
-            if(itemsAddedLastTime == 0)
+            if (itemsAddedLastTime == 0)
                 timesInARowNoneWereAdded++;
-            if(itemsAddedLastTime > 0)
+            if (itemsAddedLastTime > 0)
                 timesInARowNoneWereAdded = 0;
-        } while(timesInARowNoneWereAdded < 5);
+        } while (timesInARowNoneWereAdded < 5);
     }
 
     private int randomlyDropShapesInsideRoom() {
@@ -241,8 +289,8 @@ public class VisualizerPanel extends JPanel {
 //        g2.setColor(Color.BLUE);
         Set<java.awt.Shape> addedShapes = new HashSet<>();
 //        addedShapes.add(roomPath);
-; //
-        for(Shape solutionShape : solution.getShapes()) {
+        ; //
+        for (Shape solutionShape : solution.getShapes()) {
             List<Point> shapePoints = solutionShape.getPoints();
             GeneralPath path = new DrawableShape(shapePoints).generatePath();
             addedShapes.add(path);
@@ -273,9 +321,9 @@ public class VisualizerPanel extends JPanel {
                 path = new DrawableShape(shapePoints).generatePath();
                 i++;
                 somethingIsWrong = !Utils.isShapeInsideAnother(roomPath, path) || doesIntersectWithAnyOther(path, addedShapes);
-                if(i > 10 * shape.getCostPerUnit())
+                if (i > 10 * shape.getCostPerUnit())
                     foundNoPlace = true;
-                if(!somethingIsWrong || foundNoPlace)
+                if (!somethingIsWrong || foundNoPlace)
                     break;
             } while (true);
 
@@ -284,7 +332,7 @@ public class VisualizerPanel extends JPanel {
 //            g2.fill(path);
 //            randomShapesGenerated.add(new ShapeAndShape(path, shape));
 
-            if(!somethingIsWrong && !foundNoPlace) {
+            if (!somethingIsWrong && !foundNoPlace) {
                 removedShapes.add(shape);
                 solution.getShapes().add(newShape);
 
@@ -299,16 +347,25 @@ public class VisualizerPanel extends JPanel {
         System.out.println("GENERATE SOLUTION");
         List<Solution> sols = new ArrayList<>();
         sols.add(solution);
-        new SolutionPrinter("output/", sols).output();
+        SolutionPrinter solutionPrinter = new SolutionPrinter("output/", sols);
+        solutionPrinter.output();
+        solutionPrinter.upload();
+//        new SolutionPrinter("output/", sols).output();
     }
 
     private void extendNewSolutionShape(double pX, double pY) {
         Point selectedPoint = null;
 
-        for (Point roomPoint : problem.getRoom().getPoints()) {
+        List<Point> combinedList = new ArrayList<>(problem.getRoom().getPoints());
+        for (Shape solutionShape : solution.getShapes()) {
+            combinedList.addAll(solutionShape.getPoints());
+        }
+
+//        for (Point roomPoint : problem.getRoom().getPoints()) {
+        for (Point roomPoint : combinedList) {
             Point vector = new Point(pX, pY).translate(-roomPoint.getX(), -roomPoint.getY());
             double d2 = vector.getX() * vector.getX() + vector.getY() * vector.getY();
-            if (d2 < 0.1) {
+            if (d2 < 0.05) {
                 System.out.println(roomPoint);
                 selectedPoint = roomPoint;
             }
@@ -387,6 +444,7 @@ public class VisualizerPanel extends JPanel {
         shiftX = 0;
         shiftY = 0;
         angle = 0;
+        pointSelectionModeOn = false;
     }
 
     private void saveChosenShape() {
@@ -433,7 +491,7 @@ public class VisualizerPanel extends JPanel {
         g2.translate(0, getHeight() - 1);
         g2.scale(1, -1);
 
-        if(firstPoint != null && secondPoint != null) {
+        if (firstPoint != null && secondPoint != null) {
             drawArea(g2);
         }
 
@@ -456,8 +514,8 @@ public class VisualizerPanel extends JPanel {
 
         g2.setColor(areaColor);
 
-        Rectangle rect= new Rectangle(new java.awt.Point((int)firstPoint.getX(), (int)firstPoint.getY()));
-        rect.add(new java.awt.Point((int)secondPoint.getX(), (int)secondPoint.getY()));
+        Rectangle rect = new Rectangle(new java.awt.Point((int) firstPoint.getX(), (int) firstPoint.getY()));
+        rect.add(new java.awt.Point((int) secondPoint.getX(), (int) secondPoint.getY()));
 
         g2.fillRect(rect.x, rect.y, rect.width, rect.height);
 
@@ -528,7 +586,7 @@ public class VisualizerPanel extends JPanel {
 
     private void drawProblem(Graphics2D g2) {
         drawRoom(g2);
-        if (chosenShape == null)
+        if (chosenShape == null && showProblemShapes)
             drawShapesCorrectType(g2);
     }
 
@@ -590,7 +648,7 @@ public class VisualizerPanel extends JPanel {
 
         calculateAndSetOrigin(g2);
 
-        if(!generatedRandomBefore) {
+        if (!generatedRandomBefore) {
             for (Shape shape : shapeList) {
                 GeneralPath path;
                 int i = 1;
@@ -611,9 +669,8 @@ public class VisualizerPanel extends JPanel {
                 addedShapes.add(path);
             }
             generatedRandomBefore = true;
-        }
-        else {
-            for(ShapeAndShape shapeAndShape : randomShapesGenerated) {
+        } else {
+            for (ShapeAndShape shapeAndShape : randomShapesGenerated) {
                 Color color = colorRange.generateColor(shapeAndShape.getOurShape().getTotalCost());
                 boolean contains = false;
                 for (Shape shape1 : removedShapes) {
@@ -622,7 +679,7 @@ public class VisualizerPanel extends JPanel {
                         break;
                     }
                 }
-                if(!contains) {
+                if (!contains) {
                     g2.setColor(color);
                     g2.fill(shapeAndShape.getDrawShape());
                 }
@@ -713,7 +770,7 @@ public class VisualizerPanel extends JPanel {
         calculateScale();
 
         // Move to center
-        g2.translate((this.getWidth() - (int) roomBounds.getWidth()) / 2, (this.getHeight() - (int) roomBounds.getHeight()) / 2);
+        g2.translate((this.getWidth() - (int) roomBounds.getWidth()) / 2 + centerOffsetX, (this.getHeight() - (int) roomBounds.getHeight()) / 2 + centerOffsetY);
         g2.scale(scale, scale);
         g2.setStroke(new BasicStroke(strokeWidth));
     }

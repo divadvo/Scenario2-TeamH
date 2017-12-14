@@ -1,19 +1,44 @@
 package team.h.visualization;
 
 import team.h.algorithm.AllProblemSolver;
+import team.h.algorithm.david.VisualSolver;
 import team.h.core.Problem;
 import team.h.core.ProblemsAndSolutions;
 import team.h.core.Solution;
 import team.h.io.ProblemParser;
+import team.h.io.SolutionParser;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class VisualizationTest {
 
     public static void main(String[] args) {
-        List<Problem> problems = new ProblemParser("input/problem18.rfp").parse();
-        List<Solution> solutions = new AllProblemSolver(problems).solve();
-//        new SolutionPrinter("output/", solutions).output();
+        List<Problem> problems = new ProblemParser("input/problems.rfp").parse();
+        List<Solution> solutions;
+        if (false)
+            solutions = new AllProblemSolver(problems).solve();
+        else {
+//            solutions = new SolutionParser("output/best/combinedNew.solutions").parse();
+            solutions = new SolutionParser("output/2017-12-14_11-44-51_0.00_78.12.solutions").parse();
+        }
+
+        for(Problem problem : problems) {
+            boolean toAdd = true;
+            for(Solution solution : solutions) {
+                if(problem.getProblemNumber() == solution.getSolutionNumber()) {
+                    toAdd = false;
+                    break;
+                }
+            }
+            if(toAdd)
+                solutions.add(new VisualSolver(problem).solve());
+        }
+
+        Collections.sort(solutions, Comparator.comparingInt(Solution::getSolutionNumber));
+
         new Visualizer(new ProblemsAndSolutions(problems, solutions)).visualize();
+//        new SolutionPrinter("output/", solutions).output();
     }
 }
