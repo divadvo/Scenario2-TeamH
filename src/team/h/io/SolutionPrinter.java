@@ -1,9 +1,21 @@
 package team.h.io;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import sun.net.www.http.HttpClient;
 import team.h.core.Point;
 import team.h.core.Shape;
 import team.h.core.Solution;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SolutionPrinter {
 
@@ -20,6 +33,8 @@ public class SolutionPrinter {
 
     private static final String TEAM = "granada";
     private static final String PASSWORD = "5u0op320foc1di7eov3vkl0349";
+    private String fileName;
+    private Path solutionOutputFilePath;
 
 
     public SolutionPrinter(String solutionFolderPath, List<Solution> solutions) {
@@ -31,19 +46,62 @@ public class SolutionPrinter {
         DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("YYYY-MM-dd_HH-mm-ss");
         String time = timeStampPattern.format(java.time.LocalDateTime.now());
 //        String time = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
-        String fileName = String.format("%s_%.2f_%.2f.solutions", time, totalCost(), totalArea());
+        String problems = "p";
+        for (Solution solution : solutions)
+            problems += solution.getSolutionNumber();
+        fileName = String.format("%s_%s_%.2f_%.2f.solutions", time, problems, totalCost(), totalArea());
 
-        Path solutionOutputFilePath = Paths.get(solutionFolderPath, fileName);
+        solutionOutputFilePath = Paths.get(solutionFolderPath, fileName);
 
         List<String> lines = new ArrayList<>();
         lines.add(TEAM);
         lines.add(PASSWORD);
-        for(Solution solution : solutions) {
+        for (Solution solution : solutions) {
             lines.add(solutionToString(solution));
         }
 
         try {
             Files.write(solutionOutputFilePath, lines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveAndUploadBest(String folder) {
+        try {
+            List<Path> files = Files.list(Paths.get(folder))
+                    .filter(Files::isRegularFile)
+                    .map(Path::getFileName)
+                    .collect(Collectors.toList());
+
+            List<String> solutionStringsCombined = new ArrayList<>();
+
+            for(Path path : files) {
+                if(path.getFileName().toString().contains("problem")) {
+                    List<String> solutionStrings = Files.lines(Paths.get(folder, path.toString())).collect(Collectors.toList());
+                    String solutionString = solutionStrings.get(2);
+                    solutionStringsCombined.add(solutionString);
+
+                }
+            }
+
+
+            String fileName = "combinedGenerated.solutions";
+            Path filePath = Paths.get(folder, fileName);
+
+            List<String> lines = new ArrayList<>();
+            lines.add(TEAM);
+            lines.add(PASSWORD);
+            lines.addAll(solutionStringsCombined);
+
+            try {
+                Files.write(filePath, lines);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            uploadFile(filePath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,11 +132,11 @@ public class SolutionPrinter {
         for (int i = 0; i < shape.getPoints().size(); i++) {
             Point point = shape.getPoints().get(i);
 
-            String pointString = String.format("(%.15f,%.15f)", point.getX(), point.getY());
+            String pointString = String.format("(%.17f,%.17f)", point.getX(), point.getY());
             result.append(pointString);
 
 
-            if(i == shape.getPoints().size() - 1) // if last -> add semicolon
+            if (i == shape.getPoints().size() - 1) // if last -> add semicolon
                 result.append("; ");
             else // otherwise comma and space
                 result.append(", ");
@@ -89,15 +147,56 @@ public class SolutionPrinter {
 
     public double totalCost() {
         double cost = 0;
-        for(Solution solution : solutions)
+        for (Solution solution : solutions)
             cost += solution.getTotalCost();
         return cost;
     }
 
     public double totalArea() {
         double area = 0;
-        for(Solution solution : solutions)
+        for (Solution solution : solutions)
             area += solution.getTotalArea();
         return area;
+    }
+
+    public void upload() {
+        uploadFile(solutionOutputFilePath);
+    }
+
+    private static void uploadFile(Path solutionOutputFilePath) {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpPost httppost = new HttpPost("http://scenario.cs.ucl.ac.uk/upload");
+
+            FileBody bin = new FileBody(new File(solutionOutputFilePath.toUri()));
+
+            HttpEntity reqEntity = MultipartEntityBuilder.create()
+                    .addPart("file", bin)
+                    .build();
+
+
+            httppost.setEntity(reqEntity);
+
+            System.out.println("executing request " + httppost.getRequestLine());
+            CloseableHttpResponse response = httpclient.execute(httppost);
+            try {
+                System.out.println("----------------------------------------");
+                System.out.println(response.getStatusLine());
+                HttpEntity resEntity = response.getEntity();
+                if (resEntity != null) {
+                    System.out.println("Response content length: " + resEntity.getContentLength());
+//                    String content = EntityUtils.toString(resEntity);
+//                    System.out.println("Response: " +  content);
+                }
+                EntityUtils.consume(resEntity);
+            } catch (Exception e) {
+
+            } finally {
+                response.close();
+            }
+            httpclient.close();
+        } catch (Exception e) {
+
+        }
     }
 }
