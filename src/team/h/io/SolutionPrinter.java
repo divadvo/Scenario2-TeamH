@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SolutionPrinter {
 
@@ -45,19 +46,62 @@ public class SolutionPrinter {
         DateTimeFormatter timeStampPattern = DateTimeFormatter.ofPattern("YYYY-MM-dd_HH-mm-ss");
         String time = timeStampPattern.format(java.time.LocalDateTime.now());
 //        String time = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
-        fileName = String.format("%s_%.2f_%.2f.solutions", time, totalCost(), totalArea());
+        String problems = "p";
+        for (Solution solution : solutions)
+            problems += solution.getSolutionNumber();
+        fileName = String.format("%s_%s_%.2f_%.2f.solutions", time, problems, totalCost(), totalArea());
 
         solutionOutputFilePath = Paths.get(solutionFolderPath, fileName);
 
         List<String> lines = new ArrayList<>();
         lines.add(TEAM);
         lines.add(PASSWORD);
-        for(Solution solution : solutions) {
+        for (Solution solution : solutions) {
             lines.add(solutionToString(solution));
         }
 
         try {
             Files.write(solutionOutputFilePath, lines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveAndUploadBest(String folder) {
+        try {
+            List<Path> files = Files.list(Paths.get(folder))
+                    .filter(Files::isRegularFile)
+                    .map(Path::getFileName)
+                    .collect(Collectors.toList());
+
+            List<String> solutionStringsCombined = new ArrayList<>();
+
+            for(Path path : files) {
+                if(path.getFileName().toString().contains("problem")) {
+                    List<String> solutionStrings = Files.lines(Paths.get(folder, path.toString())).collect(Collectors.toList());
+                    String solutionString = solutionStrings.get(2);
+                    solutionStringsCombined.add(solutionString);
+
+                }
+            }
+
+
+            String fileName = "combinedGenerated.solutions";
+            Path filePath = Paths.get(folder, fileName);
+
+            List<String> lines = new ArrayList<>();
+            lines.add(TEAM);
+            lines.add(PASSWORD);
+            lines.addAll(solutionStringsCombined);
+
+            try {
+                Files.write(filePath, lines);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            uploadFile(filePath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +136,7 @@ public class SolutionPrinter {
             result.append(pointString);
 
 
-            if(i == shape.getPoints().size() - 1) // if last -> add semicolon
+            if (i == shape.getPoints().size() - 1) // if last -> add semicolon
                 result.append("; ");
             else // otherwise comma and space
                 result.append(", ");
@@ -103,19 +147,23 @@ public class SolutionPrinter {
 
     public double totalCost() {
         double cost = 0;
-        for(Solution solution : solutions)
+        for (Solution solution : solutions)
             cost += solution.getTotalCost();
         return cost;
     }
 
     public double totalArea() {
         double area = 0;
-        for(Solution solution : solutions)
+        for (Solution solution : solutions)
             area += solution.getTotalArea();
         return area;
     }
 
     public void upload() {
+        uploadFile(solutionOutputFilePath);
+    }
+
+    private static void uploadFile(Path solutionOutputFilePath) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpPost httppost = new HttpPost("http://scenario.cs.ucl.ac.uk/upload");
@@ -136,7 +184,7 @@ public class SolutionPrinter {
                 System.out.println(response.getStatusLine());
                 HttpEntity resEntity = response.getEntity();
                 if (resEntity != null) {
-                    System.out.println("Response content length: " +    resEntity.getContentLength());
+                    System.out.println("Response content length: " + resEntity.getContentLength());
 //                    String content = EntityUtils.toString(resEntity);
 //                    System.out.println("Response: " +  content);
                 }

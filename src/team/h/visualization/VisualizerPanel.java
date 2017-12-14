@@ -211,6 +211,11 @@ public class VisualizerPanel extends JPanel {
                         break;
                     case KeyEvent.VK_H:
                         showProblemShapes = !showProblemShapes;
+                        break;
+                    case KeyEvent.VK_7:
+                        uploadBest();
+                        break;
+
                 }
                 System.out.println(delta + "   DELTA ---- ANGLE DELTA  " + angleDelta);
 
@@ -222,6 +227,10 @@ public class VisualizerPanel extends JPanel {
 
             }
         });
+    }
+
+    private void uploadBest() {
+        SolutionPrinter.saveAndUploadBest("output/best");
     }
 
     private void removeAllSolutionShapes() {
@@ -514,10 +523,19 @@ public class VisualizerPanel extends JPanel {
 
         g2.setColor(areaColor);
 
-        Rectangle rect = new Rectangle(new java.awt.Point((int) firstPoint.getX(), (int) firstPoint.getY()));
-        rect.add(new java.awt.Point((int) secondPoint.getX(), (int) secondPoint.getY()));
+//        Rectangle2D.Double rect = new Rectangle2D.Double(new java.awt.Point2D(firstPoint.getX(), firstPoint.getY()));
+//        rect.add(new java.awt.Point2D( secondPoint.getX(), secondPoint.getY()));
 
-        g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+//        g2.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(firstPoint.getX(), firstPoint.getY()));
+        points.add(new Point(secondPoint.getX(), firstPoint.getY()));
+        points.add(new Point(secondPoint.getX(), secondPoint.getY()));
+        points.add(new Point(firstPoint.getX(), secondPoint.getY()));
+//        Shape shapeArea = new Shape(0, points);
+
+        GeneralPath pathNew = new DrawableShape(points).generatePath();
+        g2.fill(pathNew);
 
 //        g2.fillRect(0, 0, 100, 100);
 //        g2.fillRect((int)firstPoint.getX(), (int)firstPoint.getY(), (int)(secondPoint.getX() - firstPoint.getX()), (int)(secondPoint.getY() - firstPoint.getY()));
