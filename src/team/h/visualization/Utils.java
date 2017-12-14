@@ -28,4 +28,13 @@ public class Utils {
         // then the smaller shape is inside the bigger
         return !areaBigger.isEmpty() && areaB.equals(areaBigger);
     }
+
+    public static Area getAreaOfIntersection(Shape shapeA, Shape shapeB)
+    {
+        Area area = new Area(shapeA);
+        area.intersect(new Area(shapeB));
+
+        return area;
+    }
+
 }

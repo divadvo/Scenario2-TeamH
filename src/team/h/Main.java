@@ -10,7 +10,8 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         List<Problem> problems = new ProblemParser("input/simple.rfp").parse();
         List<Solution> solutions = new AllProblemSolver(problems).solve();
         new SolutionPrinter("output/", solutions).output();

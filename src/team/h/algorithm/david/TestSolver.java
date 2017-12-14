@@ -18,7 +18,7 @@ public class TestSolver extends Solver{
     @Override
     public Solution solve() {
         // TODO: change this
-        List<Shape> shapes = new ArrayList<>();
+        /*List<Shape> shapes = new ArrayList<>();
         List<Point> points = new ArrayList<>();
         points.add(new Point(0,0));
         points.add(new Point(1, 0));
@@ -36,10 +36,10 @@ public class TestSolver extends Solver{
         shapes.add(shape1);
         Shape shape2 = shape1.translate(1.5, 1.5);
         shapes.add(shape2);
-        this.solution = new Solution(0, shapes);
+        this.solution = new Solution(problem.getProblemNumber(), shapes);
 
         // TODO: DO THE MAGIC HERE
-        // this.solution = doMagic();
+        // this.solution = doMagic();*/
         return solution;
     }
 }
