@@ -181,6 +181,8 @@ public class VisualizerPanel extends JPanel {
                         break;
                     case KeyEvent.VK_DIVIDE:
                         targetSize = 0.4;
+                        centerOffsetX = 0;
+                        centerOffsetY = 0;
                         break;
                     case KeyEvent.VK_Z:
                         randomlyDropShapesInsideRoom();
@@ -212,8 +214,16 @@ public class VisualizerPanel extends JPanel {
                     case KeyEvent.VK_H:
                         showProblemShapes = !showProblemShapes;
                         break;
-                    case KeyEvent.VK_7:
+                    case KeyEvent.VK_1:
                         uploadBest();
+                        break;
+                    case KeyEvent.VK_NUMPAD7:
+                        shiftX -= delta;
+                        shiftY += delta;
+                        break;
+                    case KeyEvent.VK_NUMPAD3:
+                        shiftX += delta;
+                        shiftY -= delta;
                         break;
 
                 }

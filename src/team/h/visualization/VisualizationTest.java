@@ -21,7 +21,7 @@ public class VisualizationTest {
             solutions = new AllProblemSolver(problems).solve();
         else {
 //            solutions = new SolutionParser("output/best/combinedNew.solutions").parse();
-            solutions = new SolutionParser("output/2017-12-14_11-44-51_0.00_78.12.solutions").parse();
+            solutions = new SolutionParser("output/best/combinedGenerated.solutions").parse();
         }
 
         for(Problem problem : problems) {
