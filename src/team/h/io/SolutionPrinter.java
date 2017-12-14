@@ -132,7 +132,7 @@ public class SolutionPrinter {
         for (int i = 0; i < shape.getPoints().size(); i++) {
             Point point = shape.getPoints().get(i);
 
-            String pointString = String.format("(%.15f,%.15f)", point.getX(), point.getY());
+            String pointString = String.format("(%.17f,%.17f)", point.getX(), point.getY());
             result.append(pointString);
 
 
