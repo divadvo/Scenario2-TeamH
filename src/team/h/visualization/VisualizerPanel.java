@@ -156,7 +156,7 @@ public class VisualizerPanel extends JPanel {
                         angleDelta += 0.1;
                         break;
                     case KeyEvent.VK_K:
-                        delta -= deltaDeltaPrecision;
+                        delta = 0.01;
                         break;
                     case KeyEvent.VK_L:
                         delta += deltaDeltaPrecision;
